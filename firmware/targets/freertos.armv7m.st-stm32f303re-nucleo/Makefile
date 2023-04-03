@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Mon Apr 3 11:35:34 2023
-#  Last Modified : <230403.1336>
+#  Last Modified : <230403.1706>
 #
 #  Description	
 #
@@ -69,6 +69,8 @@ OPENOCDARGS = -f board/st_nucleo_f3.cfg
 ifndef TARGET
 export TARGET := freertos.armv7m
 endif
+SUBDIRS = Azatrax
+INCLUDES += -I$(realpath ../../Azatrax)
 include $(OPENMRNPATH)/etc/prog.mk
 
 ifndef DEFAULT_ADDRESS
