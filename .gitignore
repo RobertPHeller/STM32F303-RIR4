@@ -55,11 +55,13 @@ fp-info-cache
 *.bin
 *.lst
 *.cxxout
+*.hxxout
 *.xmlout
 address.h
 dirlock
 dirlock.*
 *.nxml
+compile_cdi
 
 # generated code by doxgen
 doc/html/*

@@ -48,7 +48,7 @@
 #include "Stm32I2C.hxx"
 #include "Stm32EEPROMEmulation.hxx"
 #include "Stm32PWM.hxx"
-#include "hardware.hxx"
+#include "Hardware.hxx"
 
 /** override stdin */
 const char *STDIN_DEVICE = "/dev/ser0";
