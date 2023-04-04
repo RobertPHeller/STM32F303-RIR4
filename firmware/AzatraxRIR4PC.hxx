@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Tue Apr 4 11:39:20 2023
-//  Last Modified : <230404.1523>
+//  Last Modified : <230404.1700>
 //
 //  Description	
 //
@@ -69,7 +69,7 @@ CDI_GROUP_ENTRY(vacant, openlcb::EventConfigEntry,
                 Description("(P) This event is produced when a detector is vacant."));
 /// Threshold setting.
 CDI_GROUP_ENTRY(threshold, openlcb::Uint8ConfigEntry,
-                Default(128),Name("Threshold"),
+                Default(0x18),Name("Threshold"),
                 Description("Sensor threshold value, 0-255."));
 CDI_GROUP_END();
 

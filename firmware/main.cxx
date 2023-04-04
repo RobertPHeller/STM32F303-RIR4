@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <230404.1048>
+//  Last Modified : <230404.1643>
 //
 //  Description	
 //
@@ -58,6 +58,8 @@
 #include "os/MmapGpio.hxx"
 #include "config.hxx"
 #include "Hardware.hxx"
+#include "Azatrax.hxx"
+#include "AzatraxRIR4PC.hxx"
 
 // These preprocessor symbols are used to select which physical connections
 // will be enabled in the main(). See @ref appl_main below.
@@ -122,6 +124,8 @@ public:
     }
 } factory_reset_helper;
 
+azatrax::Azatrax rir4(0x30);
+AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4);
 
 /** Entry point to application.
  *  * @param argc number of command line arguments
@@ -130,6 +134,9 @@ public:
  *  */
 int appl_main(int argc, char *argv[])
 {
+    
+    rir4.begin("/dev/i2c0");
+    
     stack.check_version_and_factory_reset(
            cfg.seg().internal_config(), openlcb::CANONICAL_VERSION, false);
     
