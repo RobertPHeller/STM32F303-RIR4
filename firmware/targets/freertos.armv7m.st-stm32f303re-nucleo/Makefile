@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Mon Apr 3 11:35:34 2023
-#  Last Modified : <230403.1706>
+#  Last Modified : <230404.1733>
 #
 #  Description	
 #
@@ -71,6 +71,8 @@ export TARGET := freertos.armv7m
 endif
 SUBDIRS = Azatrax
 INCLUDES += -I$(realpath ../../Azatrax)
+GITREPOS += $(realpath $(APP_PATH)/../)
+
 include $(OPENMRNPATH)/etc/prog.mk
 
 ifndef DEFAULT_ADDRESS
