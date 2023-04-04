@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:54 2023
-//  Last Modified : <230404.1035>
+//  Last Modified : <230404.1516>
 //
 //  Description	
 //
@@ -49,6 +49,7 @@
 #include "openlcb/ConfiguredProducer.hxx"
 #include "openlcb/ConfigRepresentation.hxx"
 #include "openlcb/MemoryConfig.hxx"
+#include "AzatraxRIR4PC.hxx"
 #include "Revision.hxxout"
 
 namespace openlcb
@@ -80,6 +81,8 @@ CDI_GROUP(IoBoardSegment, Segment(MemoryConfigDefs::SPACE_CONFIG), Offset(128));
 /// Each entry declares the name of the current entry, then the type and then
 /// optional arguments list.
 CDI_GROUP_ENTRY(internal_config, InternalConfigData);
+CDI_GROUP_ENTRY(azatraxrir4,AzatraxRIR4Config,Name("Azatrax RIR4"),
+                Description("Azatrax RIR4 shield"));
 CDI_GROUP_END();
 
 /// This segment is only needed temporarily until there is program code to set
