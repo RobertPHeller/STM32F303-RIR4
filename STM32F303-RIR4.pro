@@ -1,4 +1,4 @@
-update=Mon 03 Apr 2023 04:10:47 PM EDT
+update=Wed 12 Apr 2023 08:54:52 AM EDT
 version=1
 last_client=kicad
 [pcbnew]
@@ -64,3 +64,5 @@ LibName32=valves
 LibName33=stm32Morpho
 LibName34=sn65hvd1050
 LibName35=mechanical
+LibName36=tbd62064afg
+LibName37=tc442x

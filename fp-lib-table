@@ -3,4 +3,5 @@
   (lib (name LCC_LOGO)(type KiCad)(uri "$(KIPRJMOD)/LCC_LOGO.pretty")(options "")(descr ""))
   (lib (name PowerLabels)(type KiCad)(uri "$(KIPRJMOD)/PowerLabels.pretty")(options "")(descr ""))
   (lib (name DWSLogoBCU)(type Legacy)(uri "$(KIPRJMOD)/DWSLogoBCU.mod")(options "")(descr ""))
+  (lib (name SOP100P800X190)(type KiCad)(uri "$(KIPRJMOD)/SOP100P800X190.pretty")(options "")(descr ""))
 )
