@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <230404.1643>
+//  Last Modified : <230412.1244>
 //
 //  Description	
 //
@@ -60,6 +60,15 @@
 #include "Hardware.hxx"
 #include "Azatrax.hxx"
 #include "AzatraxRIR4PC.hxx"
+#include "Blink.hxx"
+#include "BlinkingConsumerConfig.hxx"
+#include "BlinkingConsumer.hxx"
+#include "openlcb/ServoConsumerConfig.hxx"
+#include "openlcb/ServoConsumer.hxx"
+#include "StallConsumerConfig.hxx"
+#include "StallConsumer.hxx"
+#include "SSRConsumerConfig.hxx"
+#include "SSRConsumer.hxx"
 
 // These preprocessor symbols are used to select which physical connections
 // will be enabled in the main(). See @ref appl_main below.
@@ -124,8 +133,26 @@ public:
     }
 } factory_reset_helper;
 
-azatrax::Azatrax rir4(0x30);
+DEFINE_SINGLETON_INSTANCE(BlinkTimer);
+BlinkTimer blinker(stack.executor()->active_timers());
+azatrax::Azatrax rir4(RIR4ADDRESS);
 AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4);
+#ifdef RIR4ADDRESS2
+azatrax::Azatrax rir4_2(RIR4ADDRESS2);
+AzatraxRIR4 shield2(stack.node(),cfg.seg().azatraxrir4_2(),&rir4_2);
+#endif
+BlinkingConsumer signal1(stack.node(), cfg.seg().signals().entry<0>(),SIG1_Pin());
+BlinkingConsumer signal2(stack.node(), cfg.seg().signals().entry<1>(),SIG2_Pin());
+BlinkingConsumer signal3(stack.node(), cfg.seg().signals().entry<2>(),SIG3_Pin());
+BlinkingConsumer signal4(stack.node(), cfg.seg().signals().entry<3>(),SIG4_Pin());
+openlcb::ServoConsumer srv0(stack.node(), cfg.seg().servos().entry<0>(),servoPwmCountPerMs, servo_channels[0]);
+openlcb::ServoConsumer srv1(stack.node(), cfg.seg().servos().entry<1>(),servoPwmCountPerMs, servo_channels[1]);
+openlcb::ServoConsumer srv2(stack.node(), cfg.seg().servos().entry<2>(),servoPwmCountPerMs, servo_channels[2]);
+openlcb::ServoConsumer srv3(stack.node(), cfg.seg().servos().entry<3>(),servoPwmCountPerMs, servo_channels[3]);
+StallConsumer stall1(stack.node(), cfg.seg().stallmotors().entry<0>(),StallM_Pin());                            
+StallConsumer stall2(stack.node(), cfg.seg().stallmotors().entry<1>(),StallN_Pin());
+SSRConsumer ssr1(stack.node(), cfg.seg().ssrs().entry<0>(),SSR1_Pin());
+SSRConsumer ssr2(stack.node(), cfg.seg().ssrs().entry<1>(),SSR2_Pin());
 
 /** Entry point to application.
  *  * @param argc number of command line arguments
@@ -136,7 +163,10 @@ int appl_main(int argc, char *argv[])
 {
     
     rir4.begin("/dev/i2c0");
-    
+#ifdef RIR4ADDRESS2
+    rir4_2.begin("/dev/i2c0");
+#endif
+    blinker.start(500000000);
     stack.check_version_and_factory_reset(
            cfg.seg().internal_config(), openlcb::CANONICAL_VERSION, false);
     

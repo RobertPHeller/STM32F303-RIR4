@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:54 2023
-//  Last Modified : <230404.1516>
+//  Last Modified : <230412.1212>
 //
 //  Description	
 //
@@ -45,12 +45,17 @@
 #ifndef __CONFIG_HXX
 #define __CONFIG_HXX
 
+#include "openlcb/ConfigRepresentation.hxx"
 #include "openlcb/ConfiguredConsumer.hxx"
 #include "openlcb/ConfiguredProducer.hxx"
-#include "openlcb/ConfigRepresentation.hxx"
+#include "openlcb/ServoConsumerConfig.hxx"
 #include "openlcb/MemoryConfig.hxx"
 #include "AzatraxRIR4PC.hxx"
+#include "BlinkingConsumerConfig.hxx"
+#include "StallConsumerConfig.hxx"
+#include "SSRConsumerConfig.hxx"
 #include "Revision.hxxout"
+#include "HardwareDEFS.hxx"
 
 namespace openlcb
 {
@@ -75,6 +80,12 @@ extern const SimpleNodeStaticValues SNIP_STATIC_DATA = {
 /// after an update.
 static constexpr uint16_t CANONICAL_VERSION = 0x1000;
 
+
+using ServoConsumers = RepeatedGroup<ServoConsumerConfig, NUM_SERVOS>;
+using SignalConsumers = RepeatedGroup<BlinkingConsumerConfig, NUM_SIGNALS>;
+using StallConsumers = RepeatedGroup<StallConsumerConfig, NUM_STALL>;
+using SSRConsumers = RepeatedGroup<SSRConsumerConfig, NUM_SSR>;
+
 /// Defines the main segment in the configuration CDI. This is laid out at
 /// origin 128 to give space for the ACDI user data at the beginning.
 CDI_GROUP(IoBoardSegment, Segment(MemoryConfigDefs::SPACE_CONFIG), Offset(128));
@@ -83,6 +94,18 @@ CDI_GROUP(IoBoardSegment, Segment(MemoryConfigDefs::SPACE_CONFIG), Offset(128));
 CDI_GROUP_ENTRY(internal_config, InternalConfigData);
 CDI_GROUP_ENTRY(azatraxrir4,AzatraxRIR4Config,Name("Azatrax RIR4"),
                 Description("Azatrax RIR4 shield"));
+#ifdef RIR4ADDRESS2
+CDI_GROUP_ENTRY(azatraxrir4_2,AzatraxRIR4Config,Name("Azatrax RIR4 #2");
+                Description("Azatrax RIR4 shield #2"));
+#endif
+CDI_GROUP_ENTRY(signals,SignalConsumers,Name("Signals"),RepName("Signal"),
+                Description("Blinking Signals"));
+CDI_GROUP_ENTRY(stallmotors,StallConsumers,Name("Stall Motors"),
+                RepName("Stall Motor"),Description("Stall motors for gates or other things."));
+CDI_GROUP_ENTRY(servos,ServoConsumers,Name("Servos"),RepName("Servo"),
+                Description("Servos for gates or other things."));
+CDI_GROUP_ENTRY(ssrs,SSRConsumers,Name("Solid State Relays"),RepName("Relay"),
+                Description("Solid State Relays for other accessors (sound units, etc.)"));
 CDI_GROUP_END();
 
 /// This segment is only needed temporarily until there is program code to set

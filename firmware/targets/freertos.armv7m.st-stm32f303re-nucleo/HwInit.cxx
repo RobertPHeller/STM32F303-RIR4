@@ -78,6 +78,18 @@ static Stm32I2C i2c1("/dev/i2c0", I2C1, I2C1_EV_IRQn, I2C1_ER_IRQn);
  * value. */
 const size_t EEPROMEmulation::SECTOR_SIZE = 16384;
 
+Stm32PWMGroup servo_timer(TIM3, (configCPU_CLOCK_HZ * 6 / 1000 + 65535) / 65536,
+                          configCPU_CLOCK_HZ * 6 / 1000);
+
+extern PWM* const servo_channels[];
+/// The order of these channels follows the schematic arrangement of MCU pins
+/// to logical servo ports.
+PWM * const servo_channels[4] = { //
+    Stm32PWMGroup::get_channel(&servo_timer, 4),
+    Stm32PWMGroup::get_channel(&servo_timer, 2),
+    Stm32PWMGroup::get_channel(&servo_timer, 3),
+    Stm32PWMGroup::get_channel(&servo_timer, 1)};
+
 extern "C" {
 
 /** Blink LED */
@@ -265,6 +277,21 @@ void hw_preinit(void)
 
     GpioInit::hw_init();
 
+    // Switches over servo timer pins to timer mode.
+    // PC4-5-6-8
+    gpio_init.Mode = GPIO_MODE_AF_PP;
+    gpio_init.Pull = GPIO_NOPULL;
+    gpio_init.Speed = GPIO_SPEED_FREQ_HIGH;
+    gpio_init.Alternate = GPIO_AF2_TIM3;
+    gpio_init.Pin = GPIO_PIN_4;
+    HAL_GPIO_Init(GPIOC, &gpio_init);
+    gpio_init.Pin = GPIO_PIN_5;
+    HAL_GPIO_Init(GPIOC, &gpio_init);
+    gpio_init.Pin = GPIO_PIN_6;
+    HAL_GPIO_Init(GPIOC, &gpio_init);
+    gpio_init.Pin = GPIO_PIN_8;
+    HAL_GPIO_Init(GPIOC, &gpio_init);
+    
     /* Initializes the blinker timer. */
     TIM_HandleTypeDef TimHandle;
     memset(&TimHandle, 0, sizeof(TimHandle));
