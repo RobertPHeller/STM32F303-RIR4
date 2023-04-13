@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Apr 4 16:29:59 2023
-#  Last Modified : <230404.1651>
+#  Last Modified : <230413.1058>
 #
 #  Description	
 #
@@ -44,14 +44,14 @@
 
 SRCS = $(wildcard ../*.hxx) $(wildcard ../*.cxx) $(wildcard ../Azatrax/*.hxx) \
 	$(wildcard ../Azatrax/*.cxx) \
-	$(wildcard ../targets/freertos.armv7m.st-stm32f303re-nucleo/*.hxx) \
-	$(wildcard ../targets/freertos.armv7m.st-stm32f303re-nucleo/*.cxx) \
+	$(wildcard ../targets/freertos.armv7m.st-stm32f303re-nucleo-1shield/*.hxx) \
+	$(wildcard ../targets/freertos.armv7m.st-stm32f303re-nucleo-1shield/*.cxx) \
 	Revision.dox Main.dox
 	
 all: docs
 
 
-Revision.dox: ../targets/freertos.armv7m.st-stm32f303re-nucleo/Revision.hxxout
+Revision.dox: ../targets/freertos.armv7m.st-stm32f303re-nucleo-1shield/Revision.hxxout
 	echo '/** @page Revision Build Revisions' > $@
 	grep '^[[:space:]]*"[^"]*",$$' $< |sed 's/^[[:space:]]*"/ * - /g'|sed 's/",$$//g' >> $@
 	echo '*/' >> $@

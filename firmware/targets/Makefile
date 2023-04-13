@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Mon Apr 3 11:34:45 2023
-#  Last Modified : <230403.1135>
+#  Last Modified : <230413.1046>
 #
 #  Description	
 #
@@ -44,7 +44,12 @@
 
 
 SUBDIRS = \
-	freertos.armv7m.st-stm32f303re-nucleo
+	freertos.armv7m.st-stm32f303re-nucleo-1shield \
+	freertos.armv7m.st-stm32f303re-nucleo-2shields \
+	freertos.armv7m.st-stm32f303re-nucleo-lowrescrssing \
+	freertos.armv7m.st-stm32f303re-nucleo-lowrescrssing-2shields \
+	freertos.armv7m.st-stm32f303re-nucleo-standardcrssing \
+	freertos.armv7m.st-stm32f303re-nucleo-standardcrssing-2shields
 	
 include $(OPENMRNPATH)/etc/recurse.mk
 

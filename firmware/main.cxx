@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <230412.1244>
+//  Last Modified : <230413.1028>
 //
 //  Description	
 //
@@ -59,7 +59,6 @@
 #include "config.hxx"
 #include "Hardware.hxx"
 #include "Azatrax.hxx"
-#include "AzatraxRIR4PC.hxx"
 #include "Blink.hxx"
 #include "BlinkingConsumerConfig.hxx"
 #include "BlinkingConsumer.hxx"
@@ -70,6 +69,14 @@
 #include "SSRConsumerConfig.hxx"
 #include "SSRConsumer.hxx"
 
+#if defined(LOWRESCROSSING) || defined(STANDARDRESCROSSING)
+#include "AzatraxRIR4Crossing.hxx"
+#if defined(LOWRESCROSSING) && defined(RIR4ADDRESS2)
+#include "AzatraxRIR4PC.hxx"
+#endif
+#else
+#include "AzatraxRIR4PC.hxx"
+#endif
 // These preprocessor symbols are used to select which physical connections
 // will be enabled in the main(). See @ref appl_main below.
 //#define SNIFF_ON_SERIAL
@@ -136,11 +143,31 @@ public:
 DEFINE_SINGLETON_INSTANCE(BlinkTimer);
 BlinkTimer blinker(stack.executor()->active_timers());
 azatrax::Azatrax rir4(RIR4ADDRESS);
-AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4);
 #ifdef RIR4ADDRESS2
 azatrax::Azatrax rir4_2(RIR4ADDRESS2);
+#endif
+
+#ifdef LOWRESCROSSING
+AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
+                             &rir4,true);
+#ifdef RIR4ADDRESS2
+AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4_2);
+#endif
+#elif defined(STANDARDRESCROSSING)
+#ifdef RIR4ADDRESS2
+AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
+                             &rir4,&rir4_2);
+#else
+AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
+                             &rir4,false);
+#endif
+#else
+AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4);
+#ifdef RIR4ADDRESS2
 AzatraxRIR4 shield2(stack.node(),cfg.seg().azatraxrir4_2(),&rir4_2);
 #endif
+#endif
+
 BlinkingConsumer signal1(stack.node(), cfg.seg().signals().entry<0>(),SIG1_Pin());
 BlinkingConsumer signal2(stack.node(), cfg.seg().signals().entry<1>(),SIG2_Pin());
 BlinkingConsumer signal3(stack.node(), cfg.seg().signals().entry<2>(),SIG3_Pin());

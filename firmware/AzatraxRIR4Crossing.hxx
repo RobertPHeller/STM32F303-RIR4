@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Apr 12 15:07:42 2023
-//  Last Modified : <230412.1630>
+//  Last Modified : <230413.1055>
 //
 //  Description	
 //
@@ -74,7 +74,8 @@ class AzatraxRIR4Crossing : public DefaultConfigUpdateListener,
                                         public openlcb::Polling
 {
 private:
-    enum States {Idle, Track1, Track1Wait, Track2, Track2Wait};
+    enum States {Idle, Sense1a, Sense3a, Sense1b, Sense3b,
+              Sense4aClear, Sense4bClear, Sense2aClear, Sense2bClear};
     enum Modes  {LowRes12Tracks, StandardRes1Track, StandardRes2Tracks};
 public:
     /// Constructor (one shield):
@@ -113,6 +114,7 @@ public:
           , activated_(0)
           , deactivated_(0)
           , state_(Idle)
+          , last_(Idle)
           , mode_(StandardRes2Tracks)
     {
     }
@@ -157,8 +159,8 @@ public:
         case LowRes12Tracks:
             LowRes12Tracks_poll_33hz(helper,done);
             break;
-        case StandardRes1Tracks:
-            StandardRes1Tracks_poll_33hz(helper,done);
+        case StandardRes1Track:
+            StandardRes1Track_poll_33hz(helper,done);
             break;
         case StandardRes2Tracks:
             StandardRes2Tracks_poll_33hz(helper,done);
@@ -205,80 +207,351 @@ private:
         case Idle:
             if (rir4a_->detOccupied(1))
             {
-                state_ = Track1;
+                state_ = Sense1a;
                 sendEventReport(activated_,helper,done);
+                return;
             }
             else if (rir4a_->detOccupied(3))
             {
-                state_ = Track2;
+                state_ = Sense3a;
                 sendEventReport(activated_,helper,done);
-            }
-            else
-            {
-                done->notify();
+                return;
             }
             break;
-        case Track1:
+        case Sense1a:
             if (rir4a_->detOccupied(3))
             {
-                state_ = Track2;
+                state_ = Sense3a;
             }
             else if (rir4a_->detOccupied(2))
             {
-                state_ = Track1Wait;
+                state_ = Sense2aClear;
             }
-            done->notify();
             break;
-        case Track1Wait:
+        case Sense2aClear:
             if (rir4a_->detOccupied(3))
             {
-                state_ = Track2;
-                done->notify();
+                state_ = Sense3a;
             }
-            else if (rir4a_->deVacant(2))
+            else if (rir4a_->detVacant(2))
             {
                 state_ = Idle;
                 sendEventReport(deactivated_,helper,done);
-            }
-            else
-            {
-                done->notify();
+                return;
             }
             break;
-        case Track2:
+        case Sense3a:
             if (rir4a_->detOccupied(1))
             {
-                state_ = Track1;
+                state_ = Sense1a;
             }
             else if (rir4a_->detOccupied(4))
             {
-                state_ = Track2Wait;
+                state_ = Sense4aClear;
             }
-            done->notify();
             break;
-        case Track2Wait:
+        case Sense4aClear:
             if (rir4a_->detOccupied(1))
             {
-                state_ = Track1;
-                done->notify();
+                state_ = Sense1a;
             }
-            else if (rir4a_->deVacant(4))
+            else if (rir4a_->detVacant(4))
             {
                 state_ = Idle;
                 sendEventReport(deactivated_,helper,done);
-            }
-            else
-            {
-                done->notify();
+                return;
             }
             break;
+        default: // Should not get here.
+            break;
         }
+        done->notify();
     }
-    void StandardRes1Tracks_poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
+    void StandardRes1Track_poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
     {
+        switch (state_) {
+        case Idle:
+            if (rir4a_->detOccupied(1))
+            {
+                state_ = Sense1a;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (rir4a_->detOccupied(3))
+            {
+                state_ = Sense3a;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (last_ == Sense1a && rir4a_->detOccupied(2))
+            {
+                state_ = Sense4aClear;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (last_ == Sense3a && rir4a_->detOccupied(4))
+            {
+                state_ = Sense2aClear;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            break;
+        case Sense1a:
+            if (rir4a_->stopwatchSec(1) > 30)
+            {
+                last_ = Sense1a;
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done);
+                return;
+            }
+            else if (rir4a_->detOccupied(2))
+            {
+                state_ = Sense4aClear;
+            }
+            break;
+        case Sense3a:
+            if (rir4a_->stopwatchSec(2) > 30)
+            {
+                last_ = Sense3a;
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done); 
+                return;
+            }
+            else if (rir4a_->detOccupied(4))
+            {
+                state_ = Sense2aClear;
+            }
+            break;
+        case Sense4aClear:
+            if (rir4a_->detVacant(4))
+            {
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done);
+                return;
+            }
+            break;
+        case Sense2aClear:
+            if (rir4a_->detVacant(2))
+            {
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done);
+                return;
+            }
+            break;
+        default: // should not get here.  This is for the compiler.
+            break;
+        }
+        done->notify();
     }
     void StandardRes2Tracks_poll_33hz(openlcb::WriteHelper *helper, Notifiable *done)
     {
+        switch (state_) {
+        case Idle:
+            if (rir4a_->detOccupied(1))
+            {
+                state_ = Sense1a;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (rir4a_->detOccupied(3))
+            {
+                state_ = Sense3a;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (last_ != Idle && rir4a_->detOccupied(2))
+            {
+                state_ = Sense4aClear;
+                last_ = Idle;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (last_ != Idle && rir4a_->detOccupied(4))
+            {
+                state_ = Sense2aClear;
+                last_ = Idle;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (rir4b_->detOccupied(1))
+            {
+                state_ = Sense1b;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (rir4b_->detOccupied(3))
+            {
+                state_ = Sense3b;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (last_ != Idle && rir4b_->detOccupied(2))
+            {
+                state_ = Sense4bClear;
+                last_ = Idle;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            else if (last_ != Idle && rir4b_->detOccupied(4))
+            {
+                state_ = Sense2bClear;
+                last_ = Idle;
+                sendEventReport(activated_,helper,done);
+                return;
+            }
+            break;
+        case Sense1a:
+            if (rir4b_->detOccupied(1))
+            {
+                state_ = Sense1b;
+            }
+            else if (rir4b_->detOccupied(3))
+            {
+                state_ = Sense3b;
+            }
+            else if (rir4a_->stopwatchSec(1) > 30)
+            {
+                last_ = Sense1a;
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done);
+                return;
+            }
+            else if (rir4a_->detOccupied(2))
+            {
+                state_ = Sense4aClear;
+            }
+            break;
+        case Sense3a:
+            if (rir4b_->detOccupied(1))
+            {
+                state_ = Sense1b;
+            } 
+            else if (rir4b_->detOccupied(3))
+            {
+                state_ = Sense3b;
+            }
+            else if (rir4a_->stopwatchSec(2) > 30)
+            {
+                last_ = Sense3a;
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done); 
+                return;
+            }
+            else if (rir4a_->detOccupied(4))
+            {
+                state_ = Sense2aClear;
+            }
+            break;
+        case Sense4aClear:
+            if (rir4b_->detOccupied(1))
+            {
+                state_ = Sense1b;
+            } 
+            else if (rir4b_->detOccupied(3))
+            {
+                state_ = Sense3b;
+            }
+            else if (rir4a_->detVacant(4))
+            {
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done);
+                return;
+            }
+            break;
+        case Sense2aClear:
+            if (rir4b_->detOccupied(1))
+            {
+                state_ = Sense1b;
+            } 
+            else if (rir4b_->detOccupied(3))
+            {
+                state_ = Sense3b;
+            }
+            else if (rir4a_->detVacant(2))
+            {
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done);
+                return;
+            }
+            break;
+        case Sense1b:
+            if (rir4a_->detOccupied(1))
+            {
+                state_ = Sense1a;
+            }
+            else if (rir4a_->detOccupied(3))
+            {
+                state_ = Sense3a;
+            }
+            else if (rir4b_->stopwatchSec(1) > 30)
+            {
+                last_ = Sense1b;
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done);
+                return;
+            }
+            else if (rir4b_->detOccupied(2))
+            {
+                state_ = Sense4bClear;
+            }
+            break;
+        case Sense3b:
+            if (rir4a_->detOccupied(1))
+            {
+                state_ = Sense1a;
+            } 
+            else if (rir4a_->detOccupied(3))
+            {
+                state_ = Sense3a;
+            }
+            else if (rir4b_->stopwatchSec(2) > 30)
+            {
+                last_ = Sense3b;
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done); 
+                return;
+            }
+            else if (rir4b_->detOccupied(4))
+            {
+                state_ = Sense2bClear;
+            }
+            break;
+        case Sense4bClear:
+            if (rir4a_->detOccupied(1))
+            {
+                state_ = Sense1a;
+            } 
+            else if (rir4a_->detOccupied(3))
+            {
+                state_ = Sense3a;
+            }
+            else if (rir4b_->detVacant(4))
+            {
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done);
+                return;
+            }
+            break;
+        case Sense2bClear:
+            if (rir4a_->detOccupied(1))
+            {
+                state_ = Sense1a;
+            } 
+            else if (rir4a_->detOccupied(3))
+            {
+                state_ = Sense3a;
+            }
+            else if (rir4b_->detVacant(2))
+            {
+                state_ = Idle;
+                sendEventReport(deactivated_,helper,done);
+                return;
+            }
+            break;
+        default: // should not get here
+            break;
+        }
+        done->notify();
     }
     /// Register event handlers.
     void register_event_handler()
@@ -314,7 +587,7 @@ private:
         {
             event->event_write_helper<1>()->WriteAsync(node_, mti,
                   openlcb::WriteHelper::global(),
-                  openlcb::eventid_to_buffer(deactivated__),
+                  openlcb::eventid_to_buffer(deactivated_),
                   done->new_child());
         }
         mti = openlcb::Defs::MTI_PRODUCER_IDENTIFIED_INVALID;
@@ -329,7 +602,7 @@ private:
         {
             event->event_write_helper<2>()->WriteAsync(node_, mti,
                   openlcb::WriteHelper::global(),
-                  openlcb::eventid_to_buffer(deactivated__),
+                  openlcb::eventid_to_buffer(deactivated_),
                   done->new_child());
         }
     }
@@ -341,8 +614,9 @@ private:
     azatrax::Azatrax *rir4a_;
     azatrax::Azatrax *rir4b_;
     openlcb::EventId activated_;
-    openlcb::EventId deactivated__;
+    openlcb::EventId deactivated_;
     States state_;
+    States last_;
     Modes mode_;
 };
     

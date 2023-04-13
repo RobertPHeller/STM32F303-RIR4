@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Apr 12 11:38:19 2023
-//  Last Modified : <230412.1143>
+//  Last Modified : <230413.1043>
 //
 //  Description	
 //
@@ -48,6 +48,9 @@
 
 #define RIR4ADDRESS 0x30
 //#define RIR4ADDRESS2 0x31
+
+#define LOWRESCROSSING
+//#define STANDARDRESCROSSING
 
 #define NUM_SERVOS 4
 #define NUM_SIGNALS 4

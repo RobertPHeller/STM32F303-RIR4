@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:54 2023
-//  Last Modified : <230412.1212>
+//  Last Modified : <230413.1052>
 //
 //  Description	
 //
@@ -50,12 +50,20 @@
 #include "openlcb/ConfiguredProducer.hxx"
 #include "openlcb/ServoConsumerConfig.hxx"
 #include "openlcb/MemoryConfig.hxx"
-#include "AzatraxRIR4PC.hxx"
 #include "BlinkingConsumerConfig.hxx"
 #include "StallConsumerConfig.hxx"
 #include "SSRConsumerConfig.hxx"
 #include "Revision.hxxout"
 #include "HardwareDEFS.hxx"
+
+#if defined(LOWRESCROSSING) || defined(STANDARDRESCROSSING)
+#include "AzatraxRIR4Crossing.hxx"
+#if defined(LOWRESCROSSING) && defined(RIR4ADDRESS2)
+#include "AzatraxRIR4PC.hxx"
+#endif
+#else
+#include "AzatraxRIR4PC.hxx"
+#endif
 
 namespace openlcb
 {
@@ -78,7 +86,25 @@ extern const SimpleNodeStaticValues SNIP_STATIC_DATA = {
 
 /// Modify this value every time the EEPROM needs to be cleared on the node
 /// after an update.
-static constexpr uint16_t CANONICAL_VERSION = 0x1000;
+
+#if defined(LOWRESCROSSING) || defined(STANDARDRESCROSSING)
+# if defined(LOWRESCROSSING) && defined(RIR4ADDRESS2)
+#define CANONICAL_VERSIONOFFSET 11
+# else
+#define CANONICAL_VERSIONOFFSET 10
+# endif
+#else
+# if defined(RIR4ADDRESS2)
+#define CANONICAL_VERSIONOFFSET 6
+# else 
+#define CANONICAL_VERSIONOFFSET 5
+# endif
+#endif
+
+
+
+
+static constexpr uint16_t CANONICAL_VERSION = 0x1000 + CANONICAL_VERSIONOFFSET;
 
 
 using ServoConsumers = RepeatedGroup<ServoConsumerConfig, NUM_SERVOS>;
@@ -92,11 +118,21 @@ CDI_GROUP(IoBoardSegment, Segment(MemoryConfigDefs::SPACE_CONFIG), Offset(128));
 /// Each entry declares the name of the current entry, then the type and then
 /// optional arguments list.
 CDI_GROUP_ENTRY(internal_config, InternalConfigData);
+#if defined(LOWRESCROSSING) || defined(STANDARDRESCROSSING)
+CDI_GROUP_ENTRY(azatraxrir4crossing,AzatraxRIR4CrossingConfig,
+                Name("Azatrax RIR4 Crossing"),
+                Description("Azatrax RIR4 Crossing"));
+# if defined(LOWRESCROSSING) && defined(RIR4ADDRESS2)
+CDI_GROUP_ENTRY(azatraxrir4,AzatraxRIR4Config,Name("Azatrax RIR4 #2"),
+                Description("Azatrax RIR4 shield #2"));
+#endif
+#else
 CDI_GROUP_ENTRY(azatraxrir4,AzatraxRIR4Config,Name("Azatrax RIR4"),
                 Description("Azatrax RIR4 shield"));
 #ifdef RIR4ADDRESS2
-CDI_GROUP_ENTRY(azatraxrir4_2,AzatraxRIR4Config,Name("Azatrax RIR4 #2");
+CDI_GROUP_ENTRY(azatraxrir4_2,AzatraxRIR4Config,Name("Azatrax RIR4 #2"),
                 Description("Azatrax RIR4 shield #2"));
+#endif
 #endif
 CDI_GROUP_ENTRY(signals,SignalConsumers,Name("Signals"),RepName("Signal"),
                 Description("Blinking Signals"));

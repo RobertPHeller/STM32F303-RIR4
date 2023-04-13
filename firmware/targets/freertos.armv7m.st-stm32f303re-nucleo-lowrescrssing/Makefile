@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Mon Apr 3 11:35:34 2023
-#  Last Modified : <230412.1137>
+#  Last Modified : <230413.1043>
 #
 #  Description	
 #
@@ -42,7 +42,7 @@
 #
 ##############################################################################
 
-export EXECUTABLE:=$(notdir $(realpath $(CURDIR)/../../..))
+export EXECUTABLE:=$(notdir $(realpath $(CURDIR)/../../..))_LowCross
 APP_PATH ?= $(realpath ../..)
 -include $(APP_PATH)/config.mk
 -include local_config.mk
