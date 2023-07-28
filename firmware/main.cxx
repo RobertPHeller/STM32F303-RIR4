@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <230728.1110>
+//  Last Modified : <230728.1310>
 //
 //  Description	
 //
@@ -151,27 +151,27 @@ azatrax::Azatrax rir4_2(RIR4ADDRESS2);
 #ifdef LOWRESCROSSING
 AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
                              &rir4,true);
-openlcb::RefreshLoop crossingloop(stack.node(), {crossing.polling()});
+openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
 #ifdef RIR4ADDRESS2
 AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4_2);
-openlcb::RefreshLoop shieldloop(stack.node(), {shield.polling()});
+openlcb::RefreshLoop shieldloop(stack.node(), {(openlcb::Polling*)&shield});
 #endif
 #elif defined(STANDARDRESCROSSING)
 #ifdef RIR4ADDRESS2
 AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
                              &rir4,&rir4_2);
-openlcb::RefreshLoop crossingloop(stack.node(), {crossing.polling()});
+openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
 #else
 AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
                              &rir4,false);
-openlcb::RefreshLoop crossingloop(stack.node(), {crossing.polling()});
+openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
 #endif
 #else
 AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4);
-openlcb::RefreshLoop shieldloop(stack.node(), {shield.polling()});
+openlcb::RefreshLoop shieldloop(stack.node(), {(openlcb::Polling*)&shield});
 #ifdef RIR4ADDRESS2
 AzatraxRIR4 shield2(stack.node(),cfg.seg().azatraxrir4_2(),&rir4_2);
-openlcb::RefreshLoop shield2loop(stack.node(), {shield2.polling()});
+openlcb::RefreshLoop shield2loop(stack.node(), {(openlcb::Polling*)&shield2});
 #endif
 #endif
 
