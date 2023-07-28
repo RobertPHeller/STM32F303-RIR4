@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <230413.1028>
+//  Last Modified : <230728.1110>
 //
 //  Description	
 //
@@ -51,6 +51,7 @@
 #include "openlcb/MultiConfiguredConsumer.hxx"
 #include "openlcb/ConfiguredProducer.hxx"
 #include "openlcb/ServoConsumer.hxx"
+#include <openlcb/RefreshLoop.hxx>
 
 #include "freertos_drivers/st/Stm32Gpio.hxx"
 #include "freertos_drivers/common/BlinkerGPIO.hxx"
@@ -150,21 +151,27 @@ azatrax::Azatrax rir4_2(RIR4ADDRESS2);
 #ifdef LOWRESCROSSING
 AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
                              &rir4,true);
+openlcb::RefreshLoop crossingloop(stack.node(), {crossing.polling()});
 #ifdef RIR4ADDRESS2
 AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4_2);
+openlcb::RefreshLoop shieldloop(stack.node(), {shield.polling()});
 #endif
 #elif defined(STANDARDRESCROSSING)
 #ifdef RIR4ADDRESS2
 AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
                              &rir4,&rir4_2);
+openlcb::RefreshLoop crossingloop(stack.node(), {crossing.polling()});
 #else
 AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
                              &rir4,false);
+openlcb::RefreshLoop crossingloop(stack.node(), {crossing.polling()});
 #endif
 #else
 AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4);
+openlcb::RefreshLoop shieldloop(stack.node(), {shield.polling()});
 #ifdef RIR4ADDRESS2
 AzatraxRIR4 shield2(stack.node(),cfg.seg().azatraxrir4_2(),&rir4_2);
+openlcb::RefreshLoop shield2loop(stack.node(), {shield2.polling()});
 #endif
 #endif
 
