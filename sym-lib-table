@@ -1,0 +1,7 @@
+(sym_lib_table
+  (lib (name "STM32F303-RIR4-rescue")(type "Legacy")(uri "${KIPRJMOD}/STM32F303-RIR4-rescue.lib")(options "")(descr ""))
+  (lib (name "stm32Morpho")(type "Legacy")(uri "${KIPRJMOD}/stm32Morpho.lib")(options "")(descr ""))
+  (lib (name "sn65hvd1050")(type "Legacy")(uri "${KIPRJMOD}/sn65hvd1050.lib")(options "")(descr ""))
+  (lib (name "tbd62064afg")(type "Legacy")(uri "${KIPRJMOD}/tbd62064afg.lib")(options "")(descr ""))
+  (lib (name "tc442x")(type "Legacy")(uri "${KIPRJMOD}/tc442x.lib")(options "")(descr ""))
+)
