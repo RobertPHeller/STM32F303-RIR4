@@ -29,8 +29,8 @@ without grade crossing logic.
 
 The baseboard adds additional I/O to help implement the grade crossing itself:
 
-4 Blinking Signals: for the lights
-2 Stall motors for gates or other things.
-4 Servos for gates or other things.
-2 Solid State Relays for other accessories (sound units, etc.)
+- 4 Blinking Signals: for the lights
+- 2 Stall motors for gates or other things.
+- 4 Servos for gates or other things.
+- 2 Solid State Relays for other accessories (sound units, etc.)
 
