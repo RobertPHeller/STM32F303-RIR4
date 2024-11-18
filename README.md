@@ -20,3 +20,17 @@ tracks, two shields, bi-directional) ![Standard resolution mode, four sensors
 per track (2 tracks, two shields, 
 bi-directional)](https://github.com/RobertPHeller/STM32F303-RIR4/blob/main/firmware/doc/images/StandardRes2Tracks.png)
 
+The grade crossing logic generates events for activate and deactivate.  These 
+events need to be connected to outputs to do things like lower and raise 
+gates, start/stop flashing lights, etc.
+
+It is also possible to build the firmware to just expose the RIR4 directly, 
+without grade crossing logic.
+
+The baseboard adds additional I/O to help implement the grade crossing itself:
+
+4 Blinking Signals: for the lights
+2 Stall motors for gates or other things.
+4 Servos for gates or other things.
+2 Solid State Relays for other accessories (sound units, etc.)
+
