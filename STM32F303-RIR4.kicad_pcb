@@ -29,7 +29,7 @@
   )
 
   (setup
-    (pad_to_mask_clearance 0.05)
+    (pad_to_mask_clearance 0)
     (pcbplotparams
       (layerselection 0x0000030_80000001)
       (disableapertmacros false)
