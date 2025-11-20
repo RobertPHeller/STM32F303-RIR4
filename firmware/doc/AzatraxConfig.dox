@@ -1,0 +1,71 @@
+/* -*- C -*- ****************************************************************
+ *
+ *  System        : 
+ *  Module        : 
+ *  Object Name   : $RCSfile$
+ *  Revision      : $Revision$
+ *  Date          : $Date$
+ *  Author        : $Author$
+ *  Created By    : $USER_NAME$
+ *  Created       : $ASCII_TIME$
+ *  Last Modified : <251120.1340>
+ *
+ *  Description	
+ *
+ *  Notes
+ *
+ *  History
+ *	
+ ****************************************************************************
+ *
+ *    Generic Project
+ *    Copyright (C) $YEAR$  Robert Heller D/B/A Deepwoods Software
+ *			51 Locke Hill Road
+ *			Wendell, MA 01379-9728
+ *
+ *    This program is free software; you can redistribute it and/or modify
+ *    it under the terms of the GNU General Public License as published by
+ *    the Free Software Foundation; either version 2 of the License, or
+ *    (at your option) any later version.
+ *
+ *    This program is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *    GNU General Public License for more details.
+ *
+ *    You should have received a copy of the GNU General Public License
+ *    along with this program; if not, write to the Free Software
+ *    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+ *
+ * 
+ *
+ ****************************************************************************/
+
+/** @page AzatraxRIR4PC Azatrax RIR4 Producer / Consumer Configuration
+ *
+ * Each Azatrax RIR4 shield has 4 Optical Sensors and 2 Stopwatch counters.
+ * 
+ * @section AzatraxRIR4PC01 Azatrax RIR4 Optical Sensor Producer Configuration
+ *
+ * For each Optical Sensor there are these configuration options:
+ *
+ * - Description: This is a 16 character description for the sensor and is 
+ *   only used for identification purposes.
+ * - Occupied: This is an Event that is produced when the sensor becomes 
+ *   covered.
+ * - Vacant: This is ab Event that is produced when the sensor becomes 
+ *   uncovered.
+ * 
+ * @section AzatraxRIR4PC02 Azatrax RIR4 Stopwatch Producer / Consumer Configuration
+ *
+ * For each Stopwatch there are these configuration options:
+ *
+ * - Description: This is a 16 character description for the stopwatch
+ *   and is only used for identification purposes.
+ * - Stopped: This is an Event that is produced when the Stopwatch stops.
+ * - Left to Right: This event is produced when a Stopwatch starts running 
+ *   when triggered by the lower sensor number (1 or 3).
+ * - Right to Left: This event is produced when a Stopwatch starts running 
+ *   when triggered by the higher sensor number (2 or 4).
+ * - Reset: This event is consumed to reset the Stopwatch.
+ */

@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Apr 12 12:12:38 2023
-//  Last Modified : <230412.1219>
+//  Last Modified : <251120.1358>
 //
 //  Description	
 //
@@ -46,6 +46,16 @@
 #define __SSRCONSUMERCONFIG_HXX
 
 #include "openlcb/ConfigRepresentation.hxx"
+
+/** @page SSRConsumerConfig Solid State Relay Consumer Configuration
+ * 
+ * There are two SSRs and they have these configuration options:
+ * 
+ * - Description: This ia an eight character name for the relay, used for
+ *   identification purposes.
+ * - Event On: This event is consumed to turn the relay on.
+ * - Event Off: This event is consumed to turn the relay off.
+ */
 
 /// CDI Configuration for a @ref SSRConsumer
 CDI_GROUP(SSRConsumerConfig);

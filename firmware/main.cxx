@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <230728.1310>
+//  Last Modified : <251120.1032>
 //
 //  Description	
 //
@@ -41,6 +41,22 @@
 /// 
 ///
 //////////////////////////////////////////////////////////////////////////////
+
+/**
+ * @mainpage Introduction
+ * STM32F303 Nucleo Baseboard for Aztrax RIR4 shield
+ *
+ * This baseboard has Morpho sockets for a STM32F303 board (NUCLEO-F303K8), with 
+ * one or two [Azatrax RIR4 shields](https://www.azatrax.com/arduino-shield-ir-detector.html) stacked on 
+ * top.  There is firmware that implements grade crossing logic, using two
+ * resolutions using 1 or 2 shields. There is also firmware that allows using
+ * just the sensors and stopwatches, with support for one or two shields.
+ * 
+ * The baseboard also provides additions output functions: four servos, four
+ * blink signals, two stall motors, and two Solid State relays.  These outputs
+ * can be used to implement an active grade crossing or to operate other
+ * automation. 
+ */
 
 #include <unistd.h>
 

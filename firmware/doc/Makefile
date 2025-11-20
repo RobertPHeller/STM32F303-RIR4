@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Apr 4 16:29:59 2023
-#  Last Modified : <230413.1058>
+#  Last Modified : <251120.1011>
 #
 #  Description	
 #
@@ -46,7 +46,7 @@ SRCS = $(wildcard ../*.hxx) $(wildcard ../*.cxx) $(wildcard ../Azatrax/*.hxx) \
 	$(wildcard ../Azatrax/*.cxx) \
 	$(wildcard ../targets/freertos.armv7m.st-stm32f303re-nucleo-1shield/*.hxx) \
 	$(wildcard ../targets/freertos.armv7m.st-stm32f303re-nucleo-1shield/*.cxx) \
-	Revision.dox Main.dox
+	Revision.dox KitBooklet.dox ServoConfig.dox AzatraxConfig.dox
 	
 all: docs
 
@@ -57,19 +57,33 @@ Revision.dox: ../targets/freertos.armv7m.st-stm32f303re-nucleo-1shield/Revision.
 	echo '*/' >> $@
 	                                
 .PHONY:
-docs: html pdf
+docs: html/index.html kitbooklet.pdf UserManual.pdf
 
-html latex : $(SRCS) Makefile Doxyfile
+html/index.html UserManual.pdf : $(SRCS) Makefile Doxyfile
+	rm -rf html latex
 	doxygen Doxyfile
+	$(MAKE) -C latex
+	mv latex/refman.pdf ./UserManual.pdf
 	
 
-pdf: latex
-	$(MAKE) -C latex
-	touch pdf
-                        
+latex2/refman.tex : ../main.cxx KitBooklet.dox \
+	../AzatraxRIR4Crossing.hxx AzatraxConfig.dox \
+	../BlinkingConsumerConfig.hxx ../SSRConsumerConfig.hxx \
+	../StallConsumerConfig.hxx ServoConfig.dox \
+	Makefile Doxyfile.kit $(wildcard images/*)
+	rm -rf latex2
+	doxygen Doxyfile.kit
+	
+
+kitbooklet.pdf: latex2/refman.tex
+	$(MAKE) -C latex2
+	pdfbook2 --paper=letter latex2/refman.pdf
+	mv latex2/refman-book.pdf kitbooklet.pdf
+
 clean::
-	rm -rf latex html warnings pdf
+	rm -rf latex latex2 html warnings 
                 
 veryclean:: clean
+	rm -f UserManual.pdf  kitbooklet.pdf
 
 

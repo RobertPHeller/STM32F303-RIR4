@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Apr 12 12:12:30 2023
-//  Last Modified : <230412.1219>
+//  Last Modified : <251120.1401>
 //
 //  Description	
 //
@@ -46,6 +46,15 @@
 #define __STALLCONSUMERCONFIG_HXX
 
 #include "openlcb/ConfigRepresentation.hxx"
+
+/** @page StallConsumerConfig Stall Motor Consumer Configuration
+ * 
+ * There are two stall motor drivers.  They have these configuration options:
+ * 
+ * - Description: This is an eight character name for the stall motor.
+ * - Event Up: This Event is consumed to raise the gate.
+ * - Event Down: This Event is consumed to lower the gate.
+ */
 
 /// CDI Configuration for a @ref StallConsumer
 CDI_GROUP(StallConsumerConfig);

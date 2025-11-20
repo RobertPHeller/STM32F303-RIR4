@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed Apr 12 15:07:42 2023
-//  Last Modified : <230413.1529>
+//  Last Modified : <251120.1314>
 //
 //  Description	
 //
@@ -52,6 +52,28 @@
 #include "utils/ConfigUpdateService.hxx"
 #include "openlcb/RefreshLoop.hxx"
 #include "Azatrax/Azatrax.hxx"
+
+
+/** @page AzatraxRIR4Crossing Azatrax RIR4 Crossing Configuration
+ * 
+ * Configured Producer for Azatrax RIR4 being used as a grade crossing
+ * (railroad and road level crossing).
+ * 
+ * The Azatrax RIR4 Crossing Configuration has these configuration options:
+ * 
+ * - Description (16 char string) User name of this Azatrax RIR4 Crossing.
+ *   This is just a name for identifing purposes.
+ * - Activated Event Produced (Event ID) (P) This event is produced when 
+ *   the crossing is "activated" -- a train is aproaching the crossing. This
+ *   event can be used to activate crossing protections: lowering gates
+ *   (barriers), turn on flashers, and turn on the bell.
+ * - Deactivated Event Produced (Event ID) (P) This event is produced when
+ *   the crossing is "deactivated" -- the train has cleared the crossing.
+ *   This event can be used to deactivate crossing protections: raising
+ *   gates (barriers), turn off flashers, and turn off the bell.
+ */
+
+
 
 /// CDI Configuration for a @ref AzatraxRIR4Crossing
 CDI_GROUP(AzatraxRIR4CrossingConfig);

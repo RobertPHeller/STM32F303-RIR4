@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sat Dec 17 09:23:01 2022
-//  Last Modified : <230412.1159>
+//  Last Modified : <251120.1354>
 //
 //  Description	
 //
@@ -42,6 +42,21 @@
 
 #ifndef __BLINKINGCONSUMERCONFIG_HXX
 #define __BLINKINGCONSUMERCONFIG_HXX
+
+/** @page BlinkingConsumerConfig Blinking Consumer Config
+ *
+ * There are four signal outputs each of which has these configuration options:
+ * 
+ * - Blinker Steady, Pulse, or Blink Phase (A-B): This defines the phase of
+ *   signal output.  The options are Steady on, a single Pulse, or blinking, 
+ *   which can be Slow, Medium, or Fast, with either phase A or B.  The phase
+ *   are opposite each other: B is off when A is on, and A is off when B is on.
+ * - Pulse width in seconds, 1 to 127: This is only used to the Pulse option
+ *   and defined how long the plus in on.
+ * - Blinker on: This Event is consumed to turn the output on.
+ * - Blinker off: This event is consomed to turn the output off.
+ */
+
 
 #include "openlcb/ConfigRepresentation.hxx"
 
