@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Apr 4 16:29:59 2023
-#  Last Modified : <251120.1011>
+#  Last Modified : <251121.0914>
 #
 #  Description	
 #
@@ -59,7 +59,7 @@ Revision.dox: ../targets/freertos.armv7m.st-stm32f303re-nucleo-1shield/Revision.
 .PHONY:
 docs: html/index.html kitbooklet.pdf UserManual.pdf
 
-html/index.html UserManual.pdf : $(SRCS) Makefile Doxyfile
+html/index.html UserManual.pdf : $(SRCS) Makefile Doxyfile header.tex
 	rm -rf html latex
 	doxygen Doxyfile
 	$(MAKE) -C latex
@@ -70,7 +70,7 @@ latex2/refman.tex : ../main.cxx KitBooklet.dox \
 	../AzatraxRIR4Crossing.hxx AzatraxConfig.dox \
 	../BlinkingConsumerConfig.hxx ../SSRConsumerConfig.hxx \
 	../StallConsumerConfig.hxx ServoConfig.dox \
-	Makefile Doxyfile.kit $(wildcard images/*)
+	Makefile Doxyfile.kit $(wildcard images/*) header.tex
 	rm -rf latex2
 	doxygen Doxyfile.kit
 	
@@ -79,6 +79,11 @@ kitbooklet.pdf: latex2/refman.tex
 	$(MAKE) -C latex2
 	pdfbook2 --paper=letter latex2/refman.pdf
 	mv latex2/refman-book.pdf kitbooklet.pdf
+
+header.tex: Doxyfile.kit Doxyfile Makefile header.sed
+	doxygen -w latex new_header.tex /dev/null /dev/null
+	sed <new_header.tex >header.tex -f header.sed 
+	-rm new_header.tex
 
 clean::
 	rm -rf latex latex2 html warnings 
