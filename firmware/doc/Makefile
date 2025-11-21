@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Apr 4 16:29:59 2023
-#  Last Modified : <251121.0914>
+#  Last Modified : <251121.0917>
 #
 #  Description	
 #
@@ -86,7 +86,7 @@ header.tex: Doxyfile.kit Doxyfile Makefile header.sed
 	-rm new_header.tex
 
 clean::
-	rm -rf latex latex2 html warnings 
+	rm -rf latex latex2 html warnings header.tex
                 
 veryclean:: clean
 	rm -f UserManual.pdf  kitbooklet.pdf
