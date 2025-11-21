@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <251120.1032>
+//  Last Modified : <251121.0656>
 //
 //  Description	
 //
@@ -46,6 +46,8 @@
  * @mainpage Introduction
  * STM32F303 Nucleo Baseboard for Aztrax RIR4 shield
  *
+ * @image html STM32F303-RIR4Top3D.png
+ * 
  * This baseboard has Morpho sockets for a STM32F303 board (NUCLEO-F303K8), with 
  * one or two [Azatrax RIR4 shields](https://www.azatrax.com/arduino-shield-ir-detector.html) stacked on 
  * top.  There is firmware that implements grade crossing logic, using two
