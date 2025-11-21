@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Tue Apr 4 16:29:59 2023
-#  Last Modified : <251121.0917>
+#  Last Modified : <251121.0939>
 #
 #  Description	
 #
@@ -62,6 +62,7 @@ docs: html/index.html kitbooklet.pdf UserManual.pdf
 html/index.html UserManual.pdf : $(SRCS) Makefile Doxyfile header.tex
 	rm -rf html latex
 	doxygen Doxyfile
+	cp images/*.png latex/
 	$(MAKE) -C latex
 	mv latex/refman.pdf ./UserManual.pdf
 	
@@ -73,6 +74,7 @@ latex2/refman.tex : ../main.cxx KitBooklet.dox \
 	Makefile Doxyfile.kit $(wildcard images/*) header.tex
 	rm -rf latex2
 	doxygen Doxyfile.kit
+	cp images/*.png latex2/
 	
 
 kitbooklet.pdf: latex2/refman.tex
@@ -86,7 +88,7 @@ header.tex: Doxyfile.kit Doxyfile Makefile header.sed
 	-rm new_header.tex
 
 clean::
-	rm -rf latex latex2 html warnings header.tex
+	rm -rf latex latex2 html warnings header.tex 
                 
 veryclean:: clean
 	rm -f UserManual.pdf  kitbooklet.pdf

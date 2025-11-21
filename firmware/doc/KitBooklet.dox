@@ -8,7 +8,7 @@
  *  Author        : $Author$
  *  Created By    : $USER_NAME$
  *  Created       : $ASCII_TIME$
- *  Last Modified : <251120.1651>
+ *  Last Modified : <251121.0942>
  *
  *  Description	
  *
@@ -84,7 +84,7 @@
  * The RJ45 Jacks cannot be installed wrong (they have orientation pins). 
  * Start with the shortest parts and work up to the tallest.
  *
- * Caution: before applying power to the router board, including connecting
+ * Caution: before applying power to the baseboard, including connecting
  * to a LCC network, be sure that jumper JP1 ("PWR-EXT") next to the USB
  * connector) is OFF and JP3 ("Power Source") has its jumper on the leftmost 
  * pair of pins (labeled E5V).
@@ -107,6 +107,6 @@
  * In the central area of the board are a pair of 2x19 socket headers for
  * the NUCLEO-F303K8 board.
  *
- * @image html STM32F303-RIR4Top3D.png
- * @image latex STM32F303-RIR4Top3D.png width=5in
+ * @image html STM32F303-RIR4Top3D_annotated.png
+ * @image latex STM32F303-RIR4Top3D_annotated.png width=5in
  */   
