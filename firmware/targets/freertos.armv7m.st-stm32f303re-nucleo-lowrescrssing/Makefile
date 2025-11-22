@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Mon Apr 3 11:35:34 2023
-#  Last Modified : <230413.1043>
+#  Last Modified : <251122.0954>
 #
 #  Description	
 #
@@ -75,16 +75,6 @@ GITREPOS += $(realpath $(APP_PATH)/../)
 
 include $(OPENMRNPATH)/etc/prog.mk
 
-ifndef DEFAULT_ADDRESS
-DEFAULT_ADDRESS=0x16
-endif
-
-include $(OPENMRNPATH)/etc/node_id.mk
-
-# How to use: make multibin ADDRESS=0x20 ADDRHIGH=0x45 NUM=3
-# starting address, high bits (user range), count
-multibin:
-	for i in $$(seq 1 $(NUM)) ; do $(MAKE) $(EXECUTABLE).bin ADDRESS=$$(printf 0x%02x $$(($(ADDRESS)+$$i))) ; cp $(EXECUTABLE).bin $(EXECUTABLE).f303.$$(printf %02x%02x $(ADDRHIGH) $$(($(ADDRESS)+$$i-1))).bin ; done
 
 ifeq ($(call find_missing_deps,OPENOCDPATH OPENOCDSCRIPTSPATH),)
 all: $(EXECUTABLE).bin

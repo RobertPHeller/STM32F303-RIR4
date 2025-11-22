@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <251121.0656>
+//  Last Modified : <251122.1058>
 //
 //  Description	
 //
@@ -47,14 +47,14 @@
  * STM32F303 Nucleo Baseboard for Aztrax RIR4 shield
  *
  * @image html STM32F303-RIR4Top3D.png
- * 
+ *  
  * This baseboard has Morpho sockets for a STM32F303 board (NUCLEO-F303K8), with 
  * one or two [Azatrax RIR4 shields](https://www.azatrax.com/arduino-shield-ir-detector.html) stacked on 
  * top.  There is firmware that implements grade crossing logic, using two
  * resolutions using 1 or 2 shields. There is also firmware that allows using
  * just the sensors and stopwatches, with support for one or two shields.
  * 
- * The baseboard also provides additions output functions: four servos, four
+ * The baseboard also provides additional output functions: four servos, four
  * blink signals, two stall motors, and two Solid State relays.  These outputs
  * can be used to implement an active grade crossing or to operate other
  * automation. 
@@ -75,6 +75,7 @@
 #include "freertos_drivers/common/BlinkerGPIO.hxx"
 #include "freertos_drivers/common/DummyGPIO.hxx"
 #include "os/MmapGpio.hxx"
+#include "NodeIdConfigurationGroup.hxx"
 #include "config.hxx"
 #include "Hardware.hxx"
 #include "Azatrax.hxx"
@@ -112,13 +113,7 @@ OVERRIDE_CONST(main_thread_stack_size, 2500);
 // Specifies the 48-bit OpenLCB node identifier. This must be unique for every
 // hardware manufactured, so in production this should be replaced by some
 // easily incrementable method.
-extern const openlcb::NodeID NODE_ID;
-
-// Sets up a comprehensive OpenLCB stack for a single virtual node. This stack
-// contains everything needed for a usual peripheral node -- all
-// CAN-bus-specific components, a virtual node, PIP, SNIP, Memory configuration
-// protocol, ACDI, CDI, a bunch of memory spaces, etc.
-openlcb::SimpleCanStack stack(NODE_ID);
+static openlcb::NodeID NODE_ID = 0x050101012200ULL; // 05 01 01 01 22 00
 
 
 // ConfigDef comes from config.hxx and is specific to the particular device and
@@ -159,52 +154,11 @@ public:
     }
 } factory_reset_helper;
 
-DEFINE_SINGLETON_INSTANCE(BlinkTimer);
-BlinkTimer blinker(stack.executor()->active_timers());
 azatrax::Azatrax rir4(RIR4ADDRESS);
 #ifdef RIR4ADDRESS2
 azatrax::Azatrax rir4_2(RIR4ADDRESS2);
 #endif
 
-#ifdef LOWRESCROSSING
-AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
-                             &rir4,true);
-openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
-#ifdef RIR4ADDRESS2
-AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4_2);
-openlcb::RefreshLoop shieldloop(stack.node(), {(openlcb::Polling*)&shield});
-#endif
-#elif defined(STANDARDRESCROSSING)
-#ifdef RIR4ADDRESS2
-AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
-                             &rir4,&rir4_2);
-openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
-#else
-AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
-                             &rir4,false);
-openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
-#endif
-#else
-AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4);
-openlcb::RefreshLoop shieldloop(stack.node(), {(openlcb::Polling*)&shield});
-#ifdef RIR4ADDRESS2
-AzatraxRIR4 shield2(stack.node(),cfg.seg().azatraxrir4_2(),&rir4_2);
-openlcb::RefreshLoop shield2loop(stack.node(), {(openlcb::Polling*)&shield2});
-#endif
-#endif
-
-BlinkingConsumer signal1(stack.node(), cfg.seg().signals().entry<0>(),SIG1_Pin());
-BlinkingConsumer signal2(stack.node(), cfg.seg().signals().entry<1>(),SIG2_Pin());
-BlinkingConsumer signal3(stack.node(), cfg.seg().signals().entry<2>(),SIG3_Pin());
-BlinkingConsumer signal4(stack.node(), cfg.seg().signals().entry<3>(),SIG4_Pin());
-openlcb::ServoConsumer srv0(stack.node(), cfg.seg().servos().entry<0>(),servoPwmCountPerMs, servo_channels[0]);
-openlcb::ServoConsumer srv1(stack.node(), cfg.seg().servos().entry<1>(),servoPwmCountPerMs, servo_channels[1]);
-openlcb::ServoConsumer srv2(stack.node(), cfg.seg().servos().entry<2>(),servoPwmCountPerMs, servo_channels[2]);
-openlcb::ServoConsumer srv3(stack.node(), cfg.seg().servos().entry<3>(),servoPwmCountPerMs, servo_channels[3]);
-StallConsumer stall1(stack.node(), cfg.seg().stallmotors().entry<0>(),StallM_Pin());                            
-StallConsumer stall2(stack.node(), cfg.seg().stallmotors().entry<1>(),StallN_Pin());
-SSRConsumer ssr1(stack.node(), cfg.seg().ssrs().entry<0>(),SSR1_Pin());
-SSRConsumer ssr2(stack.node(), cfg.seg().ssrs().entry<1>(),SSR2_Pin());
 
 /** Entry point to application.
  *  * @param argc number of command line arguments
@@ -213,11 +167,63 @@ SSRConsumer ssr2(stack.node(), cfg.seg().ssrs().entry<1>(),SSR2_Pin());
  *  */
 int appl_main(int argc, char *argv[])
 {
+    NodeIdMemoryConfigSpace nodeIdSpace(NODE_ID);
+    NODE_ID = nodeIdSpace.node_id();
     
     rir4.begin("/dev/i2c0");
 #ifdef RIR4ADDRESS2
     rir4_2.begin("/dev/i2c0");
 #endif
+    // Sets up a comprehensive OpenLCB stack for a single virtual node. This stack
+    // contains everything needed for a usual peripheral node -- all
+    // CAN-bus-specific components, a virtual node, PIP, SNIP, Memory configuration
+    // protocol, ACDI, CDI, a bunch of memory spaces, etc.
+    openlcb::SimpleCanStack stack(NODE_ID);
+    nodeIdSpace.RegisterSpace(&stack);
+    
+    //DEFINE_SINGLETON_INSTANCE(BlinkTimer);
+    BlinkTimer blinker(stack.executor()->active_timers());
+    
+#ifdef LOWRESCROSSING
+    AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
+                                 &rir4,true);
+    openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
+#ifdef RIR4ADDRESS2
+    AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4_2);
+    openlcb::RefreshLoop shieldloop(stack.node(), {(openlcb::Polling*)&shield});
+#endif
+#elif defined(STANDARDRESCROSSING)
+#ifdef RIR4ADDRESS2
+    AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
+                                 &rir4,&rir4_2);
+    openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
+#else
+    AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
+                                 &rir4,false);
+    openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
+#endif
+#else
+    AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4);
+    openlcb::RefreshLoop shieldloop(stack.node(), {(openlcb::Polling*)&shield});
+#ifdef RIR4ADDRESS2
+    AzatraxRIR4 shield2(stack.node(),cfg.seg().azatraxrir4_2(),&rir4_2);
+    openlcb::RefreshLoop shield2loop(stack.node(), {(openlcb::Polling*)&shield2});
+#endif
+#endif
+
+    BlinkingConsumer signal1(stack.node(), cfg.seg().signals().entry<0>(),SIG1_Pin());
+    BlinkingConsumer signal2(stack.node(), cfg.seg().signals().entry<1>(),SIG2_Pin());
+    BlinkingConsumer signal3(stack.node(), cfg.seg().signals().entry<2>(),SIG3_Pin());
+    BlinkingConsumer signal4(stack.node(), cfg.seg().signals().entry<3>(),SIG4_Pin());
+    openlcb::ServoConsumer srv0(stack.node(), cfg.seg().servos().entry<0>(),servoPwmCountPerMs, servo_channels[0]);
+    openlcb::ServoConsumer srv1(stack.node(), cfg.seg().servos().entry<1>(),servoPwmCountPerMs, servo_channels[1]);
+    openlcb::ServoConsumer srv2(stack.node(), cfg.seg().servos().entry<2>(),servoPwmCountPerMs, servo_channels[2]);
+    openlcb::ServoConsumer srv3(stack.node(), cfg.seg().servos().entry<3>(),servoPwmCountPerMs, servo_channels[3]);
+    StallConsumer stall1(stack.node(), cfg.seg().stallmotors().entry<0>(),StallM_Pin());                            
+    StallConsumer stall2(stack.node(), cfg.seg().stallmotors().entry<1>(),StallN_Pin());
+    SSRConsumer ssr1(stack.node(), cfg.seg().ssrs().entry<0>(),SSR1_Pin());
+    SSRConsumer ssr2(stack.node(), cfg.seg().ssrs().entry<1>(),SSR2_Pin());
+    
     blinker.start(500000000);
     stack.check_version_and_factory_reset(
            cfg.seg().internal_config(), openlcb::CANONICAL_VERSION, false);

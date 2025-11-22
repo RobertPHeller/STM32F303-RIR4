@@ -8,7 +8,7 @@
  *  Author        : $Author$
  *  Created By    : $USER_NAME$
  *  Created       : $ASCII_TIME$
- *  Last Modified : <251121.0942>
+ *  Last Modified : <251121.1008>
  *
  *  Description	
  *
@@ -89,6 +89,8 @@
  * connector) is OFF and JP3 ("Power Source") has its jumper on the leftmost 
  * pair of pins (labeled E5V).
  * 
+ * @section firmware Installing the firmware.
+ 
  * @page 02wiring General Wiring Notes
  *
  * There are various terminal blocks, connectors, and jumper blocks on this

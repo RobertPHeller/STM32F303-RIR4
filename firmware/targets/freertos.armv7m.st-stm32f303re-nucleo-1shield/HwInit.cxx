@@ -321,4 +321,10 @@ void usart2_interrupt_handler(void)
     uart2.interrupt_handler();
 }
 
+void hw_shutdown(void)
+{
+    reboot();
+}
+
+
 }

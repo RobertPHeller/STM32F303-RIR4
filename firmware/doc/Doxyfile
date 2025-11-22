@@ -944,6 +944,7 @@ WARN_LOGFILE           =
 # Note: If this tag is empty the current directory is searched.
 
 INPUT                  = ../main.cxx KitBooklet.dox \
+                         ../NodeIdConfigurationGroup.hxx \
                          ../AzatraxRIR4Crossing.hxx AzatraxConfig.dox \
                          ../BlinkingConsumerConfig.hxx \
                          ../SSRConsumerConfig.hxx \
