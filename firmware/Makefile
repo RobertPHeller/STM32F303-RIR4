@@ -10,10 +10,11 @@ SUBDIRS = targets doc
 -include config.mk
 include $(OPENMRNPATH)/etc/recurse.mk
 
-refman.pdf: doc/latex/refman.pdf
-	cp doc/latex/refman.pdf ./
-                
-
-doc/latex/refman.pdf: 
-	$(MAKE) -c doc pdf
+Release: all
+	-rm -f Release-`git rev-parse --short HEAD`.zip
+	zip -j Release-`git rev-parse --short HEAD`.zip \
+		targets/*/*.bin targets/*/*.elf \
+		targets/*/*.lst targets/*/*.map \
+		 doc/*.pdf
+	
 

@@ -49,6 +49,8 @@
 #include "Stm32EEPROMEmulation.hxx"
 #include "Stm32PWM.hxx"
 #include "Hardware.hxx"
+//#include "FlashFile.hxx"
+//#include "Stm32Flash.hxx"
 
 /** override stdin */
 const char *STDIN_DEVICE = "/dev/ser0";
@@ -68,6 +70,19 @@ static Stm32Can can0("/dev/can0");
 /** EEPROM emulation driver. The file size might be made bigger. */
 static Stm32EEPROMEmulation eeprom0("/dev/eeprom", 8192);
 // originally 4000
+
+/// Linker-defined symbol where in the memory space (flash) the eeprom
+/// emulation data starts.
+//extern const char __nodeid_start;
+/// Linker-defined symbol where in the memory space (flash) the eeprom
+/// emulation data ends.
+//extern const char __nodeid_end;
+
+//static Stm32Flash<FlashFixedSectors<0x400>> flasher;
+//static FlashFile<Stm32Flash<FlashFixedSectors<0x400>>> 
+//               nodeid("/dev/nodeid0",
+//                      &flasher,(size_t)&__nodeid_start,
+//                      (&__nodeid_end-&__nodeid_start));
 
 /** UART 0 serial driver instance */
 static Stm32I2C i2c1("/dev/i2c0", I2C1, I2C1_EV_IRQn, I2C1_ER_IRQn);

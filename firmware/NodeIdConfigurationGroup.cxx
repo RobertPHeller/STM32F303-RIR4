@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Sat Nov 22 11:33:58 2025
-//  Last Modified : <251122.1224>
+//  Last Modified : <251122.2244>
 //
 //  Description	
 //
@@ -79,7 +79,7 @@ static const size_t BLOCK_SIZE = 8;
 static const size_t BYTES_PER_BLOCK = 4;
 #define L4_FLASH
 #else
-#error "stm32EEPROMEmulation unsupported STM32 device"
+#error "NodeIdConfigurationGroup unsupported STM32 device"
 #endif
 
 /// Linker-defined symbol where in the memory space (flash) the eeprom
@@ -90,6 +90,7 @@ extern const char __nodeid_start;
 extern const char __nodeid_end;
 
 #define NODEID_FLASH_SIZE ((uintptr_t)(&__nodeid_end - &__nodeid_start))
+#define SECTOR_SIZE NODEID_FLASH_SIZE
 
 #ifdef F7_FLASH
 extern "C" {
@@ -127,7 +128,64 @@ void NodeIdMemoryConfigSpace::flash_write()
     }
         
 }
+void NodeIdMemoryConfigSpace::flash_erase()
+{
+    uint32_t page_error;
 
+#ifdef F7_FLASH
+    FLASH_EraseInitTypeDef erase_init;
+    memset(&erase_init, 0, sizeof(erase_init));
+
+    erase_init.TypeErase = TYPEERASE_SECTORS;
+    erase_init.Sector = ((uint32_t)&__nodeid_start) - FLASH_BASE) / PAGE_SIZE;
+    erase_init.NbSectors = 1;
+    erase_init.VoltageRange = FLASH_VOLTAGE_RANGE_3; // 3.3 to 3.6 volts powered.
+    HASSERT(SECTOR_SIZE == PAGE_SIZE);
+    portENTER_CRITICAL();
+    HAL_FLASH_Unlock();
+    HASSERT(HAL_OK == HAL_FLASHEx_Erase(&erase_init, &page_error));
+    HAL_FLASH_Lock();
+    portEXIT_CRITICAL();
+    
+#else    
+    auto* address = &__nodeid_start;
+    
+    FLASH_EraseInitTypeDef erase_init;
+    erase_init.TypeErase = FLASH_TYPEERASE_PAGES;
+#ifdef L4_FLASH
+    erase_init.Banks = FLASH_BANK_1;
+    uint32_t start_page = erase_init.Page =
+        (((uint32_t)address) - FLASH_BASE) / PAGE_SIZE;
+#else    
+    erase_init.PageAddress = (uint32_t)address;
+#endif    
+    erase_init.NbPages = SECTOR_SIZE / PAGE_SIZE;
+
+    portENTER_CRITICAL();
+    HAL_FLASH_Unlock();
+    // We erase the first page at the end, because the magic bytes are
+    // there. This is to make corruption less likely in case of a power
+    // interruption happens.
+    if (SECTOR_SIZE > PAGE_SIZE) {
+#ifdef L4_FLASH
+        erase_init.Page += 1;
+#else        
+        erase_init.PageAddress += PAGE_SIZE;
+#endif        
+        erase_init.NbPages--;
+        HAL_FLASHEx_Erase(&erase_init, &page_error);
+        erase_init.NbPages = 1;
+#ifdef L4_FLASH
+        erase_init.Page = start_page;
+#else
+        erase_init.PageAddress = (uint32_t)address;
+#endif        
+    }
+    HAL_FLASHEx_Erase(&erase_init, &page_error);
+    HAL_FLASH_Lock();
+    portEXIT_CRITICAL();
+#endif    
+}
 
 void NodeIdMemoryConfigSpace::flash_read()
 {

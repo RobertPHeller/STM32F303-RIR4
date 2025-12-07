@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Wed May 1 14:16:02 2024
-//  Last Modified : <251122.1225>
+//  Last Modified : <251122.2214>
 //
 //  Description	
 //
@@ -137,6 +137,7 @@ public:
                         LOG(VERBOSE, "[NodeIdMemCfg-WRITE] %s", contents.c_str());
                         nodeid_ = utils::string_to_uint64(contents);
                         id_ = std::move(contents);
+                        flash_erase();
                         flash_write();
                         // force the config to be reset
                         int fd = ::open(openlcb::CONFIG_FILENAME,O_RDWR);
@@ -178,6 +179,7 @@ private:
     /// temporary holder for the currently assigned node id.
     uint64_t nodeid_{0};
     NodeIdConfig *node_id_config_;
+    void flash_erase();
     void flash_write();
     void flash_read();
     

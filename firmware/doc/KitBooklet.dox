@@ -8,7 +8,7 @@
  *  Author        : $Author$
  *  Created By    : $USER_NAME$
  *  Created       : $ASCII_TIME$
- *  Last Modified : <251121.1008>
+ *  Last Modified : <251123.0858>
  *
  *  Description	
  *
@@ -88,9 +88,25 @@
  * to a LCC network, be sure that jumper JP1 ("PWR-EXT") next to the USB
  * connector) is OFF and JP3 ("Power Source") has its jumper on the leftmost 
  * pair of pins (labeled E5V).
+ *
+ * This board expects one or two Aztrax RIR4 shields on top.  The expected
+ * shield address for the first shield is 0x30 and the expected shield address 
+ * for the second chield is 0x31.
  * 
  * @section firmware Installing the firmware.
- 
+ *
+ * There are 6 firmware options.  See the table below for the combination of
+ * shields and configuration each firmware option uses.
+ * 
+ * <table>
+ * <tr><th>Firmware</th><th>Number of RIR4 shields</th><th>Crossing Configuration</th><th>RIR4 P/C Configurations</th></tr>
+ * <tr><td>STM32F303-RIR4_1Shield</td><td>1, 0x30</td><td>No</td><td>Yes, 1</td></tr>
+ * <tr><td>STM32F303-RIR4_2Shields</td><td>2, 0x30 and 0x31</td><td>No</td><td>Yes, 2</td></tr>
+ * <tr><td>STM32F303-RIR4_LowCross_2Shields</td><td>2, 0x30 and 0x31</td><td>Yes</td><td>Yes, 1</td></tr> 
+ * <tr><td>STM32F303-RIR4_LowCross</td><td>1, 0x30</td><td>Yes</td><td>No</td></tr>
+ * <tr><td>STM32F303-RIR4_StandardCrossing_2Shields</td><td>2, 0x30 and 0x31</td><td>Yes</td><td>No</td></tr>
+ * <tr><td>STM32F303-RIR4_StandardCrossing</td><td>1, 0x30</td><td>Yes</td><td>No</td></tr>
+ * </table>
  * @page 02wiring General Wiring Notes
  *
  * There are various terminal blocks, connectors, and jumper blocks on this
@@ -111,4 +127,9 @@
  *
  * @image html STM32F303-RIR4Top3D_annotated.png
  * @image latex STM32F303-RIR4Top3D_annotated.png width=5in
- */   
+ *
+ * @page 03initialConfig Initial Configuration
+ * 
+ * The first time the node is started, it is necessary to set the node id.
+ * See \ref NodeIdConfig for information about this.
+*/   
