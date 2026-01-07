@@ -8,7 +8,7 @@
 #  Author        : $Author$
 #  Created By    : Robert Heller
 #  Created       : Mon Apr 3 11:35:34 2023
-#  Last Modified : <251122.0952>
+#  Last Modified : <251218.0919>
 #
 #  Description	
 #
@@ -78,7 +78,12 @@ include $(OPENMRNPATH)/etc/prog.mk
 ifeq ($(call find_missing_deps,OPENOCDPATH OPENOCDSCRIPTSPATH),)
 all: $(EXECUTABLE).bin
 
+#GDB=/usr/bin/gdb-multiarch
+
+
+
 flash: $(EXECUTABLE)$(EXTENTION) $(EXECUTABLE).lst
+	echo $(GDB)
 	@if ps ax -o comm | grep -q openocd ; then echo openocd already running. quit existing first. ; exit 1 ; fi
 	$(GDB) $< -ex "target remote | $(OPENOCDPATH)/openocd -c \"gdb_port pipe\" --search $(OPENOCDSCRIPTSPATH) $(OPENOCDARGS)" -ex "monitor reset halt" -ex "load" -ex "monitor reset init" -ex "monitor reset run"  -ex "detach" -ex "quit"
 
