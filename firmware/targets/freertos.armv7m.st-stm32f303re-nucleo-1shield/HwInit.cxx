@@ -44,7 +44,6 @@
 #include "os/OS.hxx"
 #include "Stm32Uart.hxx"
 #include "Stm32Can.hxx"
-#include "Stm32SPI.hxx"
 #include "Stm32I2C.hxx"
 #include "Stm32EEPROMEmulation.hxx"
 #include "Stm32PWM.hxx"
@@ -289,8 +288,11 @@ void hw_preinit(void)
     HAL_GPIO_Init(GPIOB, &gpio_init);
     gpio_init.Pin = GPIO_PIN_9;
     HAL_GPIO_Init(GPIOB, &gpio_init);
-
+    
+    //__asm("BKPT #0\n") ; // Break into the debugger
+    
     GpioInit::hw_init();
+
 
     // Switches over servo timer pins to timer mode.
     // PC4-5-6-8

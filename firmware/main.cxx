@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <260108.1203>
+//  Last Modified : <260109.1300>
 //
 //  Description	
 //
@@ -75,7 +75,7 @@
 #include "freertos_drivers/common/BlinkerGPIO.hxx"
 #include "freertos_drivers/common/DummyGPIO.hxx"
 #include "os/MmapGpio.hxx"
-#include "NodeIdConfigurationGroup.hxx"
+//#include "NodeIdConfigurationGroup.hxx"
 #include "config.hxx"
 #include "Hardware.hxx"
 #include "Azatrax.hxx"
@@ -172,10 +172,10 @@ int appl_main(int argc, char *argv[])
 {
     LOG(VERBOSE,"[appl_main] Startup");
     resetblink(0x80000001);
-    NodeIdMemoryConfigSpace nodeIdSpace(NODE_ID);
-    LOG(VERBOSE,"[appl_main] nodeIdSpace allocated");
-    resetblink(0x80000005);
-    NODE_ID = nodeIdSpace.node_id();
+    //NodeIdMemoryConfigSpace nodeIdSpace(NODE_ID);
+    //LOG(VERBOSE,"[appl_main] nodeIdSpace allocated");
+    //resetblink(0x80000005);
+    //NODE_ID = nodeIdSpace.node_id();
     LOG(VERBOSE,"[appl_main] NODE_ID is 0X%llu0X", NODE_ID);
     resetblink(0x80000015);
     
@@ -194,9 +194,9 @@ int appl_main(int argc, char *argv[])
     openlcb::SimpleCanStack stack(NODE_ID);
     LOG(VERBOSE,"[appl_main] stack initialized.");
     resetblink(0x80000555);
-    nodeIdSpace.RegisterSpace(&stack);
-    LOG(VERBOSE,"[appl_main] nodeIdSpace registered.");
-    resetblink(0x80001555);
+    //nodeIdSpace.RegisterSpace(&stack);
+    //LOG(VERBOSE,"[appl_main] nodeIdSpace registered.");
+    //resetblink(0x80001555);
     
     //DEFINE_SINGLETON_INSTANCE(BlinkTimer);
     BlinkTimer blinker(stack.executor()->active_timers());

@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:54 2023
-//  Last Modified : <251122.1100>
+//  Last Modified : <260109.1258>
 //
 //  Description	
 //
@@ -50,7 +50,7 @@
 #include "openlcb/ConfiguredProducer.hxx"
 #include "openlcb/ServoConsumerConfig.hxx"
 #include "openlcb/MemoryConfig.hxx"
-#include "NodeIdConfigurationGroup.hxx"
+//#include "NodeIdConfigurationGroup.hxx"
 #include "BlinkingConsumerConfig.hxx"
 #include "StallConsumerConfig.hxx"
 #include "SSRConsumerConfig.hxx"
@@ -166,7 +166,7 @@ CDI_GROUP_ENTRY(acdi, Acdi);
 CDI_GROUP_ENTRY(userinfo, UserInfoSegment);
 /// Adds the main configuration segment.
 CDI_GROUP_ENTRY(seg, IoBoardSegment);
-CDI_GROUP_ENTRY(node,NodeIdConfig,Name("Node ID"));
+//CDI_GROUP_ENTRY(node,NodeIdConfig,Name("Node ID"));
 /// Adds the versioning segment.
 CDI_GROUP_ENTRY(version, VersionSeg);
 CDI_GROUP_END();

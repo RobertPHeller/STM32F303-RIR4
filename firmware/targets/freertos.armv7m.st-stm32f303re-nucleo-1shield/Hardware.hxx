@@ -32,9 +32,10 @@ GPIO_PIN(SSR1, GpioOutputSafeLow, A, 5);
 GPIO_PIN(SSR2, GpioOutputSafeLow, A, 6);
 
 
-typedef GpioInitializer<LED_GREEN_RAW_Pin, SW_USER_Pin, //
+typedef GpioInitializer<
+    LED_GREEN_RAW_Pin, SW_USER_Pin, //
     SRV1_Pin, SRV2_Pin, SRV3_Pin, SRV4_Pin, 
-    SIG1_Pin, SIG2_Pin, SIG3_Pin, SIG4_Pin, 
+    //SIG1_Pin, SIG2_Pin, SIG3_Pin, SIG4_Pin, 
     StallN_Pin, StallM_Pin, SSR1_Pin, SSR2_Pin,
     DummyPin>
     GpioInit;
