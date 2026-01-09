@@ -5,6 +5,6 @@ export APP_PATH
 
 -include $(APP_PATH)/openmrnpath.mk
 ifndef OPENMRNPATH
-OPENMRNPATH := $(realpath $(APP_PATH)/../..)
+OPENMRNPATH := $(realpath $(APP_PATH)/../../openmrn/)
 endif
 export OPENMRNPATH
