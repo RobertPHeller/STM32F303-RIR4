@@ -283,6 +283,9 @@ extern void hw_preinit(void);
 
 extern void hw_set_to_safe(void);
 
+extern void resetblink(unsigned long pattern);
+//extern void diewith(unsigned pattern);
+
 /** Startup the C/C++ runtime environment.
  */
 void reset_handler(void)
@@ -316,12 +319,13 @@ void reset_handler(void)
             *zero++ = 0;
         }
     }
-
+    
     hw_preinit();
+    resetblink(0x80000001);
 
     /* call static constructors */
     __libc_init_array();
-
+    resetblink(0xcccc1111);
     /* execute main */
     char *argv[] = {0};
     main(0, argv);
@@ -332,8 +336,6 @@ void reset_handler(void)
     }
 }
 
-extern void resetblink(unsigned long pattern);
-//extern void diewith(unsigned pattern);
 
 
     /* These are volatile to try and prevent the compiler/linker optimising them
