@@ -18,10 +18,10 @@ GPIO_PIN(SRV3, GpioOutputSafeHigh, C, 5);
 GPIO_PIN(SRV4, GpioOutputSafeHigh, C, 4);
 
 // Signals
-GPIO_PIN(SIG1, GpioOutputSafeLow, C, 10);
-GPIO_PIN(SIG2, GpioOutputSafeLow, C, 12);
-GPIO_PIN(SIG3, GpioOutputSafeLow, A, 13);
-GPIO_PIN(SIG4, GpioOutputSafeLow, A, 14);
+GPIO_PIN(SIG1, GpioOutputSafeLow, C, 13);
+GPIO_PIN(SIG2, GpioOutputSafeLow, C, 14);
+GPIO_PIN(SIG3, GpioOutputSafeLow, C, 15);
+GPIO_PIN(SIG4, GpioOutputSafeLow, F,  0);
 
 // Stall Motors
 GPIO_PIN(StallN, GpioOutputSafeLow, A, 15);
