@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <251122.1058>
+//  Last Modified : <260108.1203>
 //
 //  Description	
 //
@@ -159,75 +159,111 @@ azatrax::Azatrax rir4(RIR4ADDRESS);
 azatrax::Azatrax rir4_2(RIR4ADDRESS2);
 #endif
 
+extern "C" {
+extern void resetblink(uint32_t pattern);
+}
 
 /** Entry point to application.
- *  * @param argc number of command line arguments
- *  * @param argv array of command line arguments
- *  * @return 0, should never return
- *  */
+ * @param argc number of command line arguments
+ * @param argv array of command line arguments
+ * @return 0, should never return
+ */
 int appl_main(int argc, char *argv[])
 {
+    LOG(VERBOSE,"[appl_main] Startup");
+    resetblink(0x80000001);
     NodeIdMemoryConfigSpace nodeIdSpace(NODE_ID);
+    LOG(VERBOSE,"[appl_main] nodeIdSpace allocated");
+    resetblink(0x80000005);
     NODE_ID = nodeIdSpace.node_id();
+    LOG(VERBOSE,"[appl_main] NODE_ID is 0X%llu0X", NODE_ID);
+    resetblink(0x80000015);
     
     rir4.begin("/dev/i2c0");
+    LOG(VERBOSE,"[appl_main] rir4 initialized.");
+    resetblink(0x80000055);
 #ifdef RIR4ADDRESS2
     rir4_2.begin("/dev/i2c0");
+    LOG(VERBOSE,"[appl_main] rir4_2 initialized.");
+    resetblink(0x80000155);
 #endif
     // Sets up a comprehensive OpenLCB stack for a single virtual node. This stack
     // contains everything needed for a usual peripheral node -- all
     // CAN-bus-specific components, a virtual node, PIP, SNIP, Memory configuration
     // protocol, ACDI, CDI, a bunch of memory spaces, etc.
     openlcb::SimpleCanStack stack(NODE_ID);
+    LOG(VERBOSE,"[appl_main] stack initialized.");
+    resetblink(0x80000555);
     nodeIdSpace.RegisterSpace(&stack);
+    LOG(VERBOSE,"[appl_main] nodeIdSpace registered.");
+    resetblink(0x80001555);
     
     //DEFINE_SINGLETON_INSTANCE(BlinkTimer);
     BlinkTimer blinker(stack.executor()->active_timers());
-    
+    LOG(VERBOSE,"[appl_main] blinker initialized.");
+    resetblink(0x80005555);
 #ifdef LOWRESCROSSING
     AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
                                  &rir4,true);
     openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
+    LOG(VERBOSE,"[appl_main] crossing (LOWRESCROSSING) initialized.");
 #ifdef RIR4ADDRESS2
     AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4_2);
     openlcb::RefreshLoop shieldloop(stack.node(), {(openlcb::Polling*)&shield});
+    LOG(VERBOSE,"[appl_main] shield initialized.");
 #endif
 #elif defined(STANDARDRESCROSSING)
 #ifdef RIR4ADDRESS2
     AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
                                  &rir4,&rir4_2);
     openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
+    LOG(VERBOSE,"[appl_main] crossing (STANDARDRESCROSSING, 2 shields) initialized.");
 #else
     AzatraxRIR4Crossing crossing(stack.node(),cfg.seg().azatraxrir4crossing(),
                                  &rir4,false);
     openlcb::RefreshLoop crossingloop(stack.node(), {(openlcb::Polling*)&crossing});
+    LOG(VERBOSE,"[appl_main] crossing (STANDARDRESCROSSING, 1 shield) initialized."); 
 #endif
 #else
     AzatraxRIR4 shield(stack.node(),cfg.seg().azatraxrir4(),&rir4);
     openlcb::RefreshLoop shieldloop(stack.node(), {(openlcb::Polling*)&shield});
+    LOG(VERBOSE,"[appl_main] shield initialized.");
 #ifdef RIR4ADDRESS2
     AzatraxRIR4 shield2(stack.node(),cfg.seg().azatraxrir4_2(),&rir4_2);
     openlcb::RefreshLoop shield2loop(stack.node(), {(openlcb::Polling*)&shield2});
+    LOG(VERBOSE,"[appl_main] shield2 initialized.");
 #endif
 #endif
+    resetblink(0x80015555);
 
     BlinkingConsumer signal1(stack.node(), cfg.seg().signals().entry<0>(),SIG1_Pin());
     BlinkingConsumer signal2(stack.node(), cfg.seg().signals().entry<1>(),SIG2_Pin());
     BlinkingConsumer signal3(stack.node(), cfg.seg().signals().entry<2>(),SIG3_Pin());
     BlinkingConsumer signal4(stack.node(), cfg.seg().signals().entry<3>(),SIG4_Pin());
+    LOG(VERBOSE,"[appl_main] signal1, signal2, signal3, signal4 initialized.");
+    resetblink(0x80055555);
     openlcb::ServoConsumer srv0(stack.node(), cfg.seg().servos().entry<0>(),servoPwmCountPerMs, servo_channels[0]);
     openlcb::ServoConsumer srv1(stack.node(), cfg.seg().servos().entry<1>(),servoPwmCountPerMs, servo_channels[1]);
     openlcb::ServoConsumer srv2(stack.node(), cfg.seg().servos().entry<2>(),servoPwmCountPerMs, servo_channels[2]);
     openlcb::ServoConsumer srv3(stack.node(), cfg.seg().servos().entry<3>(),servoPwmCountPerMs, servo_channels[3]);
+    LOG(VERBOSE,"[appl_main] srv0, srv1, srv2, srv3 initialized.");
+    resetblink(0x80155555);
     StallConsumer stall1(stack.node(), cfg.seg().stallmotors().entry<0>(),StallM_Pin());                            
     StallConsumer stall2(stack.node(), cfg.seg().stallmotors().entry<1>(),StallN_Pin());
+    LOG(VERBOSE,"[appl_main] stall1 and stall2 initialized.");
+    resetblink(0x80555555);
     SSRConsumer ssr1(stack.node(), cfg.seg().ssrs().entry<0>(),SSR1_Pin());
     SSRConsumer ssr2(stack.node(), cfg.seg().ssrs().entry<1>(),SSR2_Pin());
+    LOG(VERBOSE,"[appl_main] ssr1 and ssr2 initialized."); 
+    resetblink(0x81555555);
     
     blinker.start(500000000);
+    LOG(VERBOSE,"[appl_main] blinker started.");
+    resetblink(0x85555555);
     stack.check_version_and_factory_reset(
            cfg.seg().internal_config(), openlcb::CANONICAL_VERSION, false);
-    
+    LOG(VERBOSE,"[appl_main] check_version_and_factory_reset done.");
+    resetblink(0x95555555);
     
     // The necessary physical ports must be added to the stack.
     //
@@ -240,6 +276,8 @@ int appl_main(int argc, char *argv[])
     // freeze waiting for that port to send the packets out.
 #if defined(HAVE_PHYSICAL_CAN_PORT)
     stack.add_can_port_select("/dev/can0");
+    LOG(VERBOSE,"[appl_main] /dev/can0 added to stack.");
+    resetblink(0xd5555555);
 #endif
 #if defined(SNIFF_ON_USB)
     stack.add_gridconnect_port("/dev/serUSB0");
