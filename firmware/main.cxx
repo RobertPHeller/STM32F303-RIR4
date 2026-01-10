@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <260109.1300>
+//  Last Modified : <260110.1055>
 //
 //  Description	
 //
@@ -70,6 +70,15 @@
 #include "openlcb/ConfiguredProducer.hxx"
 #include "openlcb/ServoConsumer.hxx"
 #include <openlcb/RefreshLoop.hxx>
+
+#ifdef LOGLEVEL
+#undef LOGLEVEL
+#define LOGLEVEL VERBOSE
+#endif
+
+
+#include "utils/TcpLogging.hxx"   // this file has also the tty code not just TCP
+
 
 #include "freertos_drivers/st/Stm32Gpio.hxx"
 #include "freertos_drivers/common/BlinkerGPIO.hxx"
@@ -138,21 +147,21 @@ static_assert(openlcb::CONFIG_FILE_SIZE <= 7000, "Need to adjust eeprom size");
 extern const char *const openlcb::SNIP_DYNAMIC_FILENAME =
 openlcb::CONFIG_FILENAME;
 
-class FactoryResetHelper : public DefaultConfigUpdateListener {
-public:
-    UpdateAction apply_configuration(int fd, bool initial_load,
-                                     BarrierNotifiable *done) OVERRIDE {
-                                         AutoNotify n(done);
-                                         return UPDATED;
-                                     }
-    
-    void factory_reset(int fd) override
-    {
-        cfg.userinfo().name().write(fd, "Azatrax RIR4");
-        cfg.userinfo().description().write(
-               fd, "Azatrax RIR4 + Nucleo dev board.");
-    }
-} factory_reset_helper;
+//class FactoryResetHelper : public DefaultConfigUpdateListener {
+//public:
+//    UpdateAction apply_configuration(int fd, bool initial_load,
+//                                     BarrierNotifiable *done) OVERRIDE {
+//                                         AutoNotify n(done);
+//                                         return UPDATED;
+//                                     }
+//    
+//    void factory_reset(int fd) override
+//    {
+//        //cfg.userinfo().name().write(fd, "Azatrax RIR4");
+//        //cfg.userinfo().description().write(
+//        //       fd, "Azatrax RIR4 + Nucleo dev board.");
+//    }
+//} factory_reset_helper;
 
 azatrax::Azatrax rir4(RIR4ADDRESS);
 #ifdef RIR4ADDRESS2

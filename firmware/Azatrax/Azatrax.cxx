@@ -33,6 +33,10 @@ Azatrax::~Azatrax() // destructor
 void Azatrax::begin(const char *i2cpath)
 {
     i2cfd_ = ::open(i2cpath, O_RDWR);
+    if (i2cfd_ < 0)
+    {
+        LOG(VERBOSE,"[Azatrax::begin] :;open() failed: errno = %d",errno);
+    }
     HASSERT(i2cfd_ >= 0);
     ::ioctl(i2cfd_, I2C_SLAVE, _deviceAddr);
 }
