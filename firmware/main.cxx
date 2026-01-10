@@ -8,7 +8,7 @@
 //  Author        : $Author$
 //  Created By    : Robert Heller
 //  Created       : Mon Apr 3 16:47:46 2023
-//  Last Modified : <260110.1055>
+//  Last Modified : <260110.1629>
 //
 //  Description	
 //
@@ -77,8 +77,7 @@
 #endif
 
 
-#include "utils/TcpLogging.hxx"   // this file has also the tty code not just TCP
-
+#include "stdio_logging.h"
 
 #include "freertos_drivers/st/Stm32Gpio.hxx"
 #include "freertos_drivers/common/BlinkerGPIO.hxx"
