@@ -4,4 +4,5 @@
   (lib (name "sn65hvd1050")(type "Legacy")(uri "${KIPRJMOD}/sn65hvd1050.lib")(options "")(descr ""))
   (lib (name "tc442x")(type "Legacy")(uri "${KIPRJMOD}/tc442x.lib")(options "")(descr ""))
   (lib (name "tbd62064")(type "KiCad")(uri "${KIPRJMOD}/tbd62064afg.kicad_sym")(options "")(descr ""))
+  (lib (name "PowerSupplyChips")(type "KiCad")(uri "${KIPRJMOD}/PowerSupplyChips.kicad_sym")(options "")(descr ""))
 )
