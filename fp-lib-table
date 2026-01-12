@@ -5,4 +5,5 @@
   (lib (name "DWSLogoBCU")(type "Legacy")(uri "$(KIPRJMOD)/DWSLogoBCU.mod")(options "")(descr ""))
   (lib (name "SOP100P800X190")(type "KiCad")(uri "$(KIPRJMOD)/SOP100P800X190.pretty")(options "")(descr ""))
   (lib (name "MyHSOP")(type "KiCad")(uri "${KIPRJMOD}/MyHSOP.pretty")(options "")(descr ""))
+  (lib (name "inductors")(type "KiCad")(uri "${KIPRJMOD}/inductors.pretty")(options "")(descr ""))
 )

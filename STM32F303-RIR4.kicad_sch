@@ -3177,10 +3177,6 @@
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 3335d379-08d8-4469-9fa1-495ed5a43fba)
   )
-  (label "E5V" (at 107.315 36.83 0)
-    (effects (font (size 1.27 1.27)) (justify left bottom))
-    (uuid 3426aa85-753f-439b-8ce1-17d6a819e205)
-  )
   (label "SSR2" (at 170.815 66.04 0)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid 4d2fd49e-2cb2-44d4-8935-68488970d97b)
@@ -3200,10 +3196,6 @@
   (label "CAN_TX" (at 184.15 127.635 180)
     (effects (font (size 1.524 1.524)) (justify right bottom))
     (uuid 86ad0555-08b3-4dde-9a3e-c1e5e29b6615)
-  )
-  (label "LCC_CAN_12V" (at 213.36 160.02 180)
-    (effects (font (size 1.524 1.524)) (justify right bottom))
-    (uuid 92848721-49b5-4e4c-b042-6fd51e1d562f)
   )
   (label "Servo4" (at 187.96 28.575 180)
     (effects (font (size 1.524 1.524)) (justify right bottom))
@@ -3248,6 +3240,21 @@
   (label "Servo2" (at 170.815 38.1 0)
     (effects (font (size 1.524 1.524)) (justify left bottom))
     (uuid fd29cce5-2d5d-4676-956a-df49a3c13d23)
+  )
+
+  (global_label "E5V" (shape input) (at 107.315 36.83 0) (fields_autoplaced)
+    (effects (font (size 1.27 1.27)) (justify left))
+    (uuid 6ef2f5ae-2fbf-438c-abdc-e7f3ca779972)
+    (property "Intersheet References" "${INTERSHEET_REFS}" (id 0) (at 113.0863 36.7506 0)
+      (effects (font (size 1.27 1.27)) (justify left) hide)
+    )
+  )
+  (global_label "LCC_CAN_12V" (shape input) (at 213.36 160.02 180) (fields_autoplaced)
+    (effects (font (size 1.524 1.524)) (justify right))
+    (uuid 938fae77-d1fe-4f25-acb6-7c2060061053)
+    (property "Intersheet References" "${INTERSHEET_REFS}" (id 0) (at 195.3311 159.9248 0)
+      (effects (font (size 1.524 1.524)) (justify right) hide)
+    )
   )
 
   (symbol (lib_id "stm32Morpho:CN7") (at 94.615 54.61 0) (unit 1)
@@ -4822,16 +4829,28 @@
       (reference "#PWR029") (unit 1) (value "GND") (footprint "")
     )
     (path "/a1eed654-048f-4954-87cf-ae733d8334dc/56845fec-bf70-4243-9bcd-8767275d7958"
-      (reference "#PWR?") (unit 1) (value "GND") (footprint "")
+      (reference "#PWR0101") (unit 1) (value "GND") (footprint "")
     )
     (path "/00000000-0000-0000-0000-0000642b2d14"
       (reference "C101") (unit 1) (value ".1 uf") (footprint "Capacitors_SMD:C_0603")
+    )
+    (path "/a1eed654-048f-4954-87cf-ae733d8334dc/a58ccb51-ffd5-494e-ac83-e76d44ab95b0"
+      (reference "C201") (unit 1) (value "10uf") (footprint "Capacitor_SMD:C_1206_3216Metric")
+    )
+    (path "/a1eed654-048f-4954-87cf-ae733d8334dc/fb852148-4ed3-4072-a526-60a7e3ef5821"
+      (reference "C202") (unit 1) (value "22uf 6.3V") (footprint "Capacitor_SMD:C_1206_3216Metric")
+    )
+    (path "/a1eed654-048f-4954-87cf-ae733d8334dc/7358b296-84f4-43dc-98cc-99e446c7913b"
+      (reference "C203") (unit 1) (value "220uf 20% 10V") (footprint "Capacitor_SMD:CP_Elec_6.3x7.7")
     )
     (path "/00000000-0000-0000-0000-0000642c5ee3"
       (reference "D101") (unit 1) (value "RX") (footprint "LEDs:LED_0603")
     )
     (path "/00000000-0000-0000-0000-0000642c64ea"
       (reference "D102") (unit 1) (value "TX") (footprint "LEDs:LED_0603")
+    )
+    (path "/a1eed654-048f-4954-87cf-ae733d8334dc/e792b142-cd67-403a-8f40-4cdb88ded2a5"
+      (reference "D201") (unit 1) (value "SK23TR") (footprint "Diode_SMD:D_SMB")
     )
     (path "/00000000-0000-0000-0000-0000642ae579"
       (reference "J0") (unit 1) (value "CN7") (footprint "stm32Morpho:ST_MorfoHeader")
@@ -4868,6 +4887,9 @@
     )
     (path "/00000000-0000-0000-0000-000064379534"
       (reference "J110") (unit 1) (value "B1 C B2") (footprint "Terminal_Blocks:TerminalBlock_Pheonix_MPT-2.54mm_3pol")
+    )
+    (path "/a1eed654-048f-4954-87cf-ae733d8334dc/707c1437-ab9e-4b8b-ada6-9d928dfd766c"
+      (reference "L201") (unit 1) (value "47uh") (footprint "inductors:SDR1307A470K")
     )
     (path "/00000000-0000-0000-0000-0000642b400b"
       (reference "MK101") (unit 1) (value "Mounting_Hole") (footprint "Mounting_Holes:MountingHole_3.2mm_M3")
@@ -4945,7 +4967,7 @@
       (reference "U107") (unit 1) (value "G3VM-61VY4") (footprint "Housings_SOIC:SO-4_4.4x4.3mm_Pitch2.54mm")
     )
     (path "/a1eed654-048f-4954-87cf-ae733d8334dc/0152b6c9-1845-4945-a0c9-cd5369d0ec4c"
-      (reference "U?") (unit 1) (value "AP1509-50") (footprint "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm")
+      (reference "U201") (unit 1) (value "AP1509-50") (footprint "Package_SO:SOIC-8_3.9x4.9mm_P1.27mm")
     )
   )
 )
